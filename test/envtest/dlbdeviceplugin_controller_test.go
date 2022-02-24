@@ -15,86 +15,52 @@
 package envtest
 
 import (
-	"context"
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 
 	devicepluginv1 "github.com/intel/intel-device-plugins-for-kubernetes/pkg/apis/deviceplugin/v1"
 )
 
 var _ = Describe("DlbDevicePlugin Controller", func() {
 
-	const timeout = time.Second * 30
-	const interval = time.Second * 1
-
 	Context("Basic CRUD operations", func() {
 		It("should handle DlbDevicePlugin objects correctly", func() {
+			By("creating DlbDevicePlugin successfully")
 			spec := devicepluginv1.DlbDevicePluginSpec{
 				Image:        "testimage",
 				NodeSelector: map[string]string{"feature.node.kubernetes.io/dlb": "true"},
 				LogLevel:     4,
 			}
-
-			key := types.NamespacedName{
-				Name: "dlbdeviceplugin-test",
-			}
-
-			toCreate := &devicepluginv1.DlbDevicePlugin{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: key.Name,
-				},
-				Spec: spec,
-			}
-
-			By("creating DlbDevicePlugin successfully")
-			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
-			time.Sleep(time.Second * 5)
-
 			fetched := &devicepluginv1.DlbDevicePlugin{}
-			Eventually(func() bool {
-				_ = k8sClient.Get(context.Background(), key, fetched)
-				return len(fetched.Status.ControlledDaemonSet.UID) > 0
-			}, timeout, interval).Should(BeTrue())
 
-			Eventually(func() devicepluginv1.DlbDevicePluginSpec {
-				_ = k8sClient.Get(context.Background(), key, fetched)
-				return fetched.Spec
-			}, timeout, interval).Should(Equal(spec))
+			testCreateDevicePluginWithSpec(dlb, spec, fetched)
 
-			By("updating image name successfully")
-			updatedImage := "updated-dlb-testimage"
-			updatedNodeSelector := map[string]string{"updated-dlb-nodeSelector": "true"}
-			updatedLogLevel := 3
-			fetched.Spec.Image = updatedImage
-			fetched.Spec.NodeSelector = updatedNodeSelector
-			fetched.Spec.LogLevel = updatedLogLevel
+			By("creating DlbDevicePlugin without setting Spec.NodeSelector successfully")
+			spec = devicepluginv1.DlbDevicePluginSpec{
+				Image: "testimage",
+			}
+			testDelete(dlb)
+			testCreateDevicePluginWithSpec(dlb, spec, fetched)
 
-			Expect(k8sClient.Update(context.Background(), fetched)).Should(Succeed())
+			By("updating DlbDevicePlugin successfully")
+			spec = devicepluginv1.DlbDevicePluginSpec{
+				Image:        "updated-testimage",
+				NodeSelector: map[string]string{"test": "updated-node-selector"},
+				LogLevel:     3,
+			}
+			fetched.Spec = spec
 			fetchedUpdated := &devicepluginv1.DlbDevicePlugin{}
-			Eventually(func() devicepluginv1.DlbDevicePluginSpec {
-				_ = k8sClient.Get(context.Background(), key, fetchedUpdated)
-				return fetchedUpdated.Spec
-			}, timeout, interval).Should(Equal(
-				devicepluginv1.DlbDevicePluginSpec{
-					Image:        updatedImage,
-					NodeSelector: updatedNodeSelector,
-					LogLevel:     updatedLogLevel}))
+			testUpdateDevicePlugin(fetched)
+			testUpdateImage(dlb, fetched, fetchedUpdated)
+			testUpdateArgs(dlb, fetched, fetchedUpdated)
+			testUpdateNodeSelector(dlb, fetched)
+
+			fetchedUpdated.Spec.NodeSelector = map[string]string{}
+			testUpdateDevicePlugin(fetchedUpdated)
+			testUpdateNodeSelector(dlb, fetchedUpdated)
 
 			By("deleting DlbDevicePlugin successfully")
-			Eventually(func() error {
-				f := &devicepluginv1.DlbDevicePlugin{}
-				_ = k8sClient.Get(context.Background(), key, f)
-				return k8sClient.Delete(context.Background(), f)
-			}, timeout, interval).Should(Succeed())
-
-			Eventually(func() error {
-				f := &devicepluginv1.DlbDevicePlugin{}
-				return k8sClient.Get(context.Background(), key, f)
-			}, timeout, interval).ShouldNot(Succeed())
+			testDelete("dlb")
 		})
 	})
 

@@ -50,6 +50,17 @@ import (
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
+const (
+	timeout  = time.Second * 30
+	interval = time.Second * 1
+	dlb      = "dlb"
+	dsa      = "dsa"
+	gpu      = "gpu"
+	fpga     = "fpga"
+	qat      = "qat"
+	sgx      = "sgx"
+)
+
 var (
 	cfg         *rest.Config
 	k8sClient   client.Client
@@ -138,6 +149,197 @@ func down() {
 	cancel()
 }
 
+func getImage(name string, dpToUpdate client.Object) string {
+	switch name {
+	case dlb:
+		return dpToUpdate.(*devicepluginv1.DlbDevicePlugin).Spec.Image
+	case dsa:
+		return dpToUpdate.(*devicepluginv1.DsaDevicePlugin).Spec.Image
+	case gpu:
+		return dpToUpdate.(*devicepluginv1.GpuDevicePlugin).Spec.Image
+	case fpga:
+		return dpToUpdate.(*devicepluginv1.FpgaDevicePlugin).Spec.Image
+	case qat:
+		return dpToUpdate.(*devicepluginv1.QatDevicePlugin).Spec.Image
+	case sgx:
+		return dpToUpdate.(*devicepluginv1.SgxDevicePlugin).Spec.Image
+	default:
+		return ""
+	}
+}
+
+func getInitImage(name string, dpToUpdate client.Object) string {
+	switch name {
+	case gpu:
+		return dpToUpdate.(*devicepluginv1.GpuDevicePlugin).Spec.InitImage
+	case fpga:
+		return dpToUpdate.(*devicepluginv1.FpgaDevicePlugin).Spec.InitImage
+	case sgx:
+		return dpToUpdate.(*devicepluginv1.SgxDevicePlugin).Spec.InitImage
+	default:
+		return ""
+	}
+}
+
+func getIntendedArgs(name string, dpToUpdate client.Object) []string {
+	var intendedArgs []string
+
+	switch name {
+	case dlb:
+		intendedArgs = dlbctr.GetPodArgs(dpToUpdate.(*devicepluginv1.DlbDevicePlugin))
+	case dsa:
+		intendedArgs = dsactr.GetPodArgs(dpToUpdate.(*devicepluginv1.DsaDevicePlugin))
+	case fpga:
+		intendedArgs = fpgactr.GetPodArgs(dpToUpdate.(*devicepluginv1.FpgaDevicePlugin))
+	case gpu:
+		intendedArgs = gpuctr.GetPodArgs(dpToUpdate.(*devicepluginv1.GpuDevicePlugin))
+	case sgx:
+		intendedArgs = sgxctr.GetPodArgs(dpToUpdate.(*devicepluginv1.SgxDevicePlugin))
+	case qat:
+		intendedArgs = qatctr.GetPodArgs(dpToUpdate.(*devicepluginv1.QatDevicePlugin))
+	}
+
+	return intendedArgs
+}
+
+func getIntendedNodeSelector(name string, dpToUpdate client.Object) map[string]string {
+	var intendedNodeSelector map[string]string
+
+	switch name {
+	case dlb:
+		intendedNodeSelector = dpToUpdate.(*devicepluginv1.DlbDevicePlugin).Spec.NodeSelector
+	case dsa:
+		intendedNodeSelector = dpToUpdate.(*devicepluginv1.DsaDevicePlugin).Spec.NodeSelector
+	case gpu:
+		intendedNodeSelector = dpToUpdate.(*devicepluginv1.GpuDevicePlugin).Spec.NodeSelector
+	case fpga:
+		intendedNodeSelector = dpToUpdate.(*devicepluginv1.FpgaDevicePlugin).Spec.NodeSelector
+	case qat:
+		intendedNodeSelector = dpToUpdate.(*devicepluginv1.QatDevicePlugin).Spec.NodeSelector
+	case sgx:
+		intendedNodeSelector = dpToUpdate.(*devicepluginv1.SgxDevicePlugin).Spec.NodeSelector
+	}
+
+	if len(intendedNodeSelector) == 0 {
+		intendedNodeSelector = map[string]string{"kubernetes.io/arch": "amd64"}
+	}
+
+	return intendedNodeSelector
+}
+
+func getKey(name string) types.NamespacedName {
+	return types.NamespacedName{
+		Name: name + "deviceplugin-test",
+	}
+}
+
+func isDaemonSetCreated(name string, fetched client.Object) bool {
+	return Eventually(func() bool {
+		_ = k8sClient.Get(context.Background(), getKey(name), fetched)
+		switch name {
+		case dlb:
+			return len(fetched.(*devicepluginv1.DlbDevicePlugin).Status.ControlledDaemonSet.UID) > 0
+		case dsa:
+			return len(fetched.(*devicepluginv1.DsaDevicePlugin).Status.ControlledDaemonSet.UID) > 0
+		case gpu:
+			return len(fetched.(*devicepluginv1.GpuDevicePlugin).Status.ControlledDaemonSet.UID) > 0
+		case fpga:
+			return len(fetched.(*devicepluginv1.FpgaDevicePlugin).Status.ControlledDaemonSet.UID) > 0
+		case qat:
+			return len(fetched.(*devicepluginv1.QatDevicePlugin).Status.ControlledDaemonSet.UID) > 0
+		case sgx:
+			return len(fetched.(*devicepluginv1.SgxDevicePlugin).Status.ControlledDaemonSet.UID) > 0
+		default:
+			return false
+		}
+	}, timeout, interval).Should(BeTrue())
+}
+
+func testCreateDevicePluginWithSpec(name string, spec interface{}, fetched client.Object) {
+	toCreate := makeDP(name, spec)
+	testCreateDevicePlugin(name, toCreate, fetched)
+}
+func testCreateDevicePlugin(name string, toCreate client.Object, fetched client.Object) {
+	Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
+	time.Sleep(time.Second * 5)
+	isDaemonSetCreated(name, fetched)
+	testUpdateNodeSelector(name, toCreate)
+	testUpdateArgs(name, toCreate, fetched)
+
+	if name == gpu || name == sgx {
+		testUpdateInitImage(name, toCreate, fetched)
+	}
+}
+
+func testDelete(name string) {
+	var f client.Object
+
+	switch name {
+	case dlb:
+		f = &devicepluginv1.DlbDevicePlugin{}
+	case dsa:
+		f = &devicepluginv1.DsaDevicePlugin{}
+	case gpu:
+		f = &devicepluginv1.GpuDevicePlugin{}
+	case fpga:
+		f = &devicepluginv1.FpgaDevicePlugin{}
+	case qat:
+		f = &devicepluginv1.QatDevicePlugin{}
+	case sgx:
+		f = &devicepluginv1.SgxDevicePlugin{}
+	}
+
+	Eventually(func() error {
+		_ = k8sClient.Get(context.Background(), getKey(name), f)
+
+		return k8sClient.Delete(context.Background(), f)
+	}, timeout, interval).Should(Succeed())
+
+	Eventually(func() error {
+		return k8sClient.Get(context.Background(), getKey(name), f)
+	}, timeout, interval).ShouldNot(Succeed())
+}
+
+func testUpdateArgs(name string, dpToUpdate client.Object, updatedDp client.Object) {
+	ds := &apps.DaemonSet{}
+
+	Eventually(func() []string {
+		_ = k8sClient.Get(ctx, types.NamespacedName{Namespace: ns, Name: "intel-" + name + "-plugin"}, ds)
+		return ds.Spec.Template.Spec.Containers[0].Args
+	}, timeout, interval).Should(Equal(getIntendedArgs(name, dpToUpdate)))
+}
+
+func testUpdateDevicePlugin(dpToUpdate client.Object) {
+	Expect(k8sClient.Update(context.Background(), dpToUpdate)).Should(Succeed())
+}
+
+func testUpdateImage(name string, dpToUpdate client.Object, updatedDp client.Object) {
+	Eventually(func() string {
+		_ = k8sClient.Get(context.Background(), getKey(name), updatedDp)
+		return getImage(name, updatedDp)
+	}, timeout, interval).Should(Equal(getImage(name, dpToUpdate)))
+}
+
+func testUpdateInitImage(name string, dpToUpdate client.Object, updatedDp client.Object) {
+	var initImage string
+
+	Eventually(func() string {
+		_ = k8sClient.Get(context.Background(), getKey(name), updatedDp)
+		initImage = getInitImage(name, updatedDp)
+
+		return initImage
+	}, timeout, interval).Should(Equal(getInitImage(name, dpToUpdate)))
+}
+
+func testUpdateNodeSelector(name string, dpToUpdate client.Object) {
+	ds := &apps.DaemonSet{}
+
+	Eventually(func() map[string]string {
+		_ = k8sClient.Get(ctx, types.NamespacedName{Namespace: ns, Name: "intel-" + name + "-plugin"}, ds)
+		return ds.Spec.Template.Spec.NodeSelector
+	}, timeout, interval).Should(Equal(getIntendedNodeSelector(name, dpToUpdate)))
+}
+
 func testUpgrade(name string, dp interface{}, pimage, pinitimage *string) {
 	down()
 
@@ -182,40 +384,40 @@ func makeDevicePlugin(name, image, initimage string) client.Object {
 	var obj client.Object
 
 	switch name {
-	case "dlb":
+	case dlb:
 		obj = &devicepluginv1.DlbDevicePlugin{
 			Spec: devicepluginv1.DlbDevicePluginSpec{
 				Image: image,
 			},
 		}
-	case "dsa":
+	case dsa:
 		obj = &devicepluginv1.DsaDevicePlugin{
 			Spec: devicepluginv1.DsaDevicePluginSpec{
 				Image:     image,
 				InitImage: initimage,
 			},
 		}
-	case "fpga":
+	case fpga:
 		obj = &devicepluginv1.FpgaDevicePlugin{
 			Spec: devicepluginv1.FpgaDevicePluginSpec{
 				Image:     image,
 				InitImage: initimage,
 			},
 		}
-	case "gpu":
+	case gpu:
 		obj = &devicepluginv1.GpuDevicePlugin{
 			Spec: devicepluginv1.GpuDevicePluginSpec{
 				Image:     image,
 				InitImage: initimage,
 			},
 		}
-	case "qat":
+	case qat:
 		obj = &devicepluginv1.QatDevicePlugin{
 			Spec: devicepluginv1.QatDevicePluginSpec{
 				Image: image,
 			},
 		}
-	case "sgx":
+	case sgx:
 		obj = &devicepluginv1.SgxDevicePlugin{
 			Spec: devicepluginv1.SgxDevicePluginSpec{
 				Image:     image,
@@ -229,24 +431,73 @@ func makeDevicePlugin(name, image, initimage string) client.Object {
 	return obj
 }
 
+func makeDP(name string, spec interface{}) client.Object {
+	switch name {
+	case dlb:
+		return &devicepluginv1.DlbDevicePlugin{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: getKey(name).Name,
+			},
+			Spec: spec.(devicepluginv1.DlbDevicePluginSpec),
+		}
+	case dsa:
+		return &devicepluginv1.DsaDevicePlugin{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: getKey(name).Name,
+			},
+			Spec: spec.(devicepluginv1.DsaDevicePluginSpec),
+		}
+	case fpga:
+		return &devicepluginv1.FpgaDevicePlugin{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: getKey(name).Name,
+			},
+			Spec: spec.(devicepluginv1.FpgaDevicePluginSpec),
+		}
+	case gpu:
+		return &devicepluginv1.GpuDevicePlugin{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: getKey(name).Name,
+			},
+			Spec: spec.(devicepluginv1.GpuDevicePluginSpec),
+		}
+	case qat:
+		return &devicepluginv1.QatDevicePlugin{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: getKey(name).Name,
+			},
+			Spec: spec.(devicepluginv1.QatDevicePluginSpec),
+		}
+	case sgx:
+		return &devicepluginv1.SgxDevicePlugin{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: getKey(name).Name,
+			},
+			Spec: spec.(devicepluginv1.SgxDevicePluginSpec),
+		}
+	default:
+		return nil
+	}
+}
+
 func makeDaemonSet(name, image, initimage string) *apps.DaemonSet {
 	var ds *apps.DaemonSet
 
 	initcontainerName := "intel-" + name + "-initcontainer"
 
 	switch name {
-	case "dlb":
+	case dlb:
 		ds = deployments.DLBPluginDaemonSet()
-	case "dsa":
+	case dsa:
 		ds = deployments.DSAPluginDaemonSet()
 		initcontainerName = "intel-idxd-config-initcontainer"
-	case "gpu":
+	case gpu:
 		ds = deployments.GPUPluginDaemonSet()
-	case "fpga":
+	case fpga:
 		ds = deployments.FPGAPluginDaemonSet()
-	case "qat":
+	case qat:
 		ds = deployments.QATPluginDaemonSet()
-	case "sgx":
+	case sgx:
 		ds = deployments.SGXPluginDaemonSet()
 	}
 

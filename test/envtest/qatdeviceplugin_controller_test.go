@@ -16,52 +16,36 @@ package envtest
 
 import (
 	"context"
-	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 
 	devicepluginv1 "github.com/intel/intel-device-plugins-for-kubernetes/pkg/apis/deviceplugin/v1"
 )
 
 var _ = Describe("QatDevicePlugin Controller", func() {
 
-	const timeout = time.Second * 30
-	const interval = time.Second * 1
-
 	Context("Basic CRUD operations", func() {
 		It("should handle QatDevicePlugin objects correctly", func() {
+			By("creating QatDevicePlugin successfully")
 			spec := devicepluginv1.QatDevicePluginSpec{
-				Image: "testimage",
+				NodeSelector: map[string]string{"test": "nodeselector"},
+				Image:        "testimage",
+				LogLevel:     3,
 			}
-
-			key := types.NamespacedName{
-				Name: "qatdeviceplugin-test",
-			}
-
 			annotations := map[string]string{
 				"container.apparmor.security.beta.kubernetes.io/intel-qat-plugin": "unconfined",
 			}
-
 			toCreate := &devicepluginv1.QatDevicePlugin{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:        key.Name,
+					Name:        getKey(qat).Name,
 					Annotations: annotations,
 				},
 				Spec: spec,
 			}
-
-			By("creating QatDevicePlugin successfully")
-			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
-			time.Sleep(time.Second * 5)
-
 			fetched := &devicepluginv1.QatDevicePlugin{}
-			Eventually(func() bool {
-				_ = k8sClient.Get(context.Background(), key, fetched)
-				return len(fetched.Status.ControlledDaemonSet.UID) > 0
-			}, timeout, interval).Should(BeTrue())
+			testCreateDevicePlugin(qat, toCreate, fetched)
 
 			By("copy annotations successfully")
 			Expect(&(fetched.Annotations) == &annotations).ShouldNot(BeTrue())
@@ -70,35 +54,46 @@ var _ = Describe("QatDevicePlugin Controller", func() {
 			By("updating annotations successfully")
 			updatedAnnotations := map[string]string{"key": "value"}
 			fetched.Annotations = updatedAnnotations
-			Expect(k8sClient.Update(context.Background(), fetched)).Should(Succeed())
 			updated := &devicepluginv1.QatDevicePlugin{}
+			testUpdateDevicePlugin(fetched)
 			Eventually(func() map[string]string {
-				_ = k8sClient.Get(context.Background(), key, updated)
+				_ = k8sClient.Get(context.Background(), getKey(qat), updated)
 				return updated.Annotations
 			}, timeout, interval).Should(Equal(updatedAnnotations))
 
-			By("updating image name successfully")
-			updatedImage := "updated-testimage"
-			fetched.Spec.Image = updatedImage
+			By("creating QatDevicePlugin without setting Spec.NodeSelector successfully")
+			spec = devicepluginv1.QatDevicePluginSpec{
+				Image: "testimage",
+			}
+			toCreate = &devicepluginv1.QatDevicePlugin{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: getKey(qat).Name,
+				},
+				Spec: spec,
+			}
+			testDelete(qat)
+			testCreateDevicePlugin(qat, toCreate, fetched)
 
-			Expect(k8sClient.Update(context.Background(), fetched)).Should(Succeed())
+			By("updating QatDevicePlugin successfully")
+			spec = devicepluginv1.QatDevicePluginSpec{
+				Image:        "updated-testimage",
+				NodeSelector: map[string]string{"test": "updated-node-selector"},
+				LogLevel:     4,
+			}
+			fetched.Spec = spec
 			fetchedUpdated := &devicepluginv1.QatDevicePlugin{}
-			Eventually(func() string {
-				_ = k8sClient.Get(context.Background(), key, fetchedUpdated)
-				return fetchedUpdated.Spec.Image
-			}, timeout, interval).Should(Equal(updatedImage))
+			testUpdateDevicePlugin(fetched)
+			testUpdateImage(qat, fetched, fetchedUpdated)
+			testUpdateInitImage(qat, fetched, fetchedUpdated)
+			testUpdateArgs(qat, fetched, fetchedUpdated)
+			testUpdateNodeSelector(qat, fetched)
+
+			fetchedUpdated.Spec.NodeSelector = map[string]string{}
+			testUpdateDevicePlugin(fetchedUpdated)
+			testUpdateNodeSelector(qat, fetchedUpdated)
 
 			By("deleting QatDevicePlugin successfully")
-			Eventually(func() error {
-				f := &devicepluginv1.QatDevicePlugin{}
-				_ = k8sClient.Get(context.Background(), key, f)
-				return k8sClient.Delete(context.Background(), f)
-			}, timeout, interval).Should(Succeed())
-
-			Eventually(func() error {
-				f := &devicepluginv1.QatDevicePlugin{}
-				return k8sClient.Get(context.Background(), key, f)
-			}, timeout, interval).ShouldNot(Succeed())
+			testDelete(qat)
 		})
 	})
 

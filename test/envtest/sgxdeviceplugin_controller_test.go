@@ -15,72 +15,53 @@
 package envtest
 
 import (
-	"context"
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 
 	devicepluginv1 "github.com/intel/intel-device-plugins-for-kubernetes/pkg/apis/deviceplugin/v1"
 )
 
 var _ = Describe("SgxDevicePlugin Controller", func() {
 
-	const timeout = time.Second * 30
-	const interval = time.Second * 1
-
 	Context("Basic CRUD operations", func() {
 		It("should handle SgxDevicePlugin objects correctly", func() {
-			spec := devicepluginv1.SgxDevicePluginSpec{
-				Image:     "sgx-testimage",
-				InitImage: "sgx-testinitimage",
-			}
-
-			key := types.NamespacedName{
-				Name: "sgxdeviceplugin-test",
-			}
-
-			toCreate := &devicepluginv1.SgxDevicePlugin{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: key.Name,
-				},
-				Spec: spec,
-			}
-
 			By("creating SgxDevicePlugin successfully")
-			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
-			time.Sleep(time.Second * 5)
-
+			spec := devicepluginv1.SgxDevicePluginSpec{
+				NodeSelector: map[string]string{"test": "nodeselector"},
+				Image:        "testimage",
+				InitImage:    "testinitimage",
+				LogLevel:     3,
+			}
 			fetched := &devicepluginv1.SgxDevicePlugin{}
-			Eventually(func() bool {
-				_ = k8sClient.Get(context.Background(), key, fetched)
-				return len(fetched.Status.ControlledDaemonSet.UID) > 0
-			}, timeout, interval).Should(BeTrue())
+			testCreateDevicePluginWithSpec(sgx, spec, fetched)
 
-			By("updating image name successfully")
-			updatedImage := "updated-sgx-testimage"
-			fetched.Spec.Image = updatedImage
+			By("creating SgxDevicePlugin without setting Spec.NodeSelector successfully")
+			spec = devicepluginv1.SgxDevicePluginSpec{
+				Image: "testimage",
+			}
+			testDelete(sgx)
+			testCreateDevicePluginWithSpec(sgx, spec, fetched)
 
-			Expect(k8sClient.Update(context.Background(), fetched)).Should(Succeed())
+			By("updating SgxDevicePlugin successfully")
+			spec = devicepluginv1.SgxDevicePluginSpec{
+				Image:        "updated-testimage",
+				NodeSelector: map[string]string{"test": "updated-node-selector"},
+				LogLevel:     4,
+			}
+			fetched.Spec = spec
 			fetchedUpdated := &devicepluginv1.SgxDevicePlugin{}
-			Eventually(func() string {
-				_ = k8sClient.Get(context.Background(), key, fetchedUpdated)
-				return fetchedUpdated.Spec.Image
-			}, timeout, interval).Should(Equal(updatedImage))
+			testUpdateDevicePlugin(fetched)
+			testUpdateImage(sgx, fetched, fetchedUpdated)
+			testUpdateInitImage(sgx, fetched, fetchedUpdated)
+			testUpdateArgs(sgx, fetched, fetchedUpdated)
+			testUpdateNodeSelector(sgx, fetched)
+
+			fetchedUpdated.Spec.NodeSelector = map[string]string{}
+			testUpdateDevicePlugin(fetchedUpdated)
+			testUpdateNodeSelector(sgx, fetchedUpdated)
 
 			By("deleting SgxDevicePlugin successfully")
-			Eventually(func() error {
-				f := &devicepluginv1.SgxDevicePlugin{}
-				_ = k8sClient.Get(context.Background(), key, f)
-				return k8sClient.Delete(context.Background(), f)
-			}, timeout, interval).Should(Succeed())
-
-			Eventually(func() error {
-				f := &devicepluginv1.SgxDevicePlugin{}
-				return k8sClient.Get(context.Background(), key, f)
-			}, timeout, interval).ShouldNot(Succeed())
+			testDelete(sgx)
 		})
 	})
 

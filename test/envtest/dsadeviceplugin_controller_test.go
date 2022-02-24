@@ -15,71 +15,53 @@
 package envtest
 
 import (
-	"context"
-	"time"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 
 	devicepluginv1 "github.com/intel/intel-device-plugins-for-kubernetes/pkg/apis/deviceplugin/v1"
 )
 
 var _ = Describe("DsaDevicePlugin Controller", func() {
 
-	const timeout = time.Second * 30
-	const interval = time.Second * 1
-
 	Context("Basic CRUD operations", func() {
 		It("should handle DsaDevicePlugin objects correctly", func() {
+			By("creating DsaDevicePlugin successfully")
 			spec := devicepluginv1.DsaDevicePluginSpec{
+				NodeSelector: map[string]string{"test": "nodeselector"},
+				Image:        "testimage",
+				InitImage:    "testinitimage",
+				LogLevel:     3,
+			}
+			fetched := &devicepluginv1.DsaDevicePlugin{}
+			testCreateDevicePluginWithSpec(dsa, spec, fetched)
+
+			By("creating DsaDevicePlugin without setting Spec.NodeSelector successfully")
+			spec = devicepluginv1.DsaDevicePluginSpec{
 				Image: "testimage",
 			}
+			testDelete(dsa)
+			testCreateDevicePluginWithSpec(dsa, spec, fetched)
 
-			key := types.NamespacedName{
-				Name: "dsadeviceplugin-test",
+			By("updating DsaDevicePlugin successfully")
+			spec = devicepluginv1.DsaDevicePluginSpec{
+				Image:        "updated-testimage",
+				NodeSelector: map[string]string{"test": "updated-node-selector"},
+				LogLevel:     4,
 			}
-
-			toCreate := &devicepluginv1.DsaDevicePlugin{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: key.Name,
-				},
-				Spec: spec,
-			}
-
-			By("creating DsaDevicePlugin successfully")
-			Expect(k8sClient.Create(context.Background(), toCreate)).Should(Succeed())
-			time.Sleep(time.Second * 5)
-
-			fetched := &devicepluginv1.DsaDevicePlugin{}
-			Eventually(func() bool {
-				_ = k8sClient.Get(context.Background(), key, fetched)
-				return len(fetched.Status.ControlledDaemonSet.UID) > 0
-			}, timeout, interval).Should(BeTrue())
-
-			By("updating image name successfully")
-			updatedImage := "updated-dsa-testimage"
-			fetched.Spec.Image = updatedImage
-
-			Expect(k8sClient.Update(context.Background(), fetched)).Should(Succeed())
+			fetched.Spec = spec
 			fetchedUpdated := &devicepluginv1.DsaDevicePlugin{}
-			Eventually(func() string {
-				_ = k8sClient.Get(context.Background(), key, fetchedUpdated)
-				return fetchedUpdated.Spec.Image
-			}, timeout, interval).Should(Equal(updatedImage))
+			testUpdateDevicePlugin(fetched)
+			testUpdateImage(dsa, fetched, fetchedUpdated)
+			testUpdateInitImage(dsa, fetched, fetchedUpdated)
+			testUpdateArgs(dsa, fetched, fetchedUpdated)
+			testUpdateNodeSelector(dsa, fetched)
+
+			fetchedUpdated.Spec.NodeSelector = map[string]string{}
+			testUpdateDevicePlugin(fetchedUpdated)
+			testUpdateNodeSelector(dsa, fetchedUpdated)
 
 			By("deleting DsaDevicePlugin successfully")
-			Eventually(func() error {
-				f := &devicepluginv1.DsaDevicePlugin{}
-				_ = k8sClient.Get(context.Background(), key, f)
-				return k8sClient.Delete(context.Background(), f)
-			}, timeout, interval).Should(Succeed())
-
-			Eventually(func() error {
-				f := &devicepluginv1.DsaDevicePlugin{}
-				return k8sClient.Get(context.Background(), key, f)
-			}, timeout, interval).ShouldNot(Succeed())
+			testDelete(dsa)
 		})
 	})
 
