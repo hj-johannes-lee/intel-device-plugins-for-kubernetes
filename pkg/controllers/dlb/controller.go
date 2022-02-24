@@ -89,7 +89,7 @@ func (c *controller) NewDaemonSet(rawObj client.Object) *apps.DaemonSet {
 
 	daemonSet.ObjectMeta.Namespace = c.ns
 
-	daemonSet.Spec.Template.Spec.Containers[0].Args = getPodArgs(devicePlugin)
+	daemonSet.Spec.Template.Spec.Containers[0].Args = GetPodArgs(devicePlugin)
 	daemonSet.Spec.Template.Spec.Containers[0].Image = devicePlugin.Spec.Image
 
 	return daemonSet
@@ -113,7 +113,7 @@ func (c *controller) UpdateDaemonSet(rawObj client.Object, ds *apps.DaemonSet) (
 		updated = true
 	}
 
-	newargs := getPodArgs(dp)
+	newargs := GetPodArgs(dp)
 	if strings.Join(ds.Spec.Template.Spec.Containers[0].Args, " ") != strings.Join(newargs, " ") {
 		ds.Spec.Template.Spec.Containers[0].Args = newargs
 		updated = true
@@ -153,7 +153,7 @@ func (c *controller) UpdateStatus(rawObj client.Object, ds *apps.DaemonSet, node
 	return updated, nil
 }
 
-func getPodArgs(gdp *devicepluginv1.DlbDevicePlugin) []string {
+func GetPodArgs(gdp *devicepluginv1.DlbDevicePlugin) []string {
 	args := make([]string, 0, 4)
 	args = append(args, "-v", strconv.Itoa(gdp.Spec.LogLevel))
 

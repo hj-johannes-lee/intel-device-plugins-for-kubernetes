@@ -67,7 +67,7 @@ func (c *controller) newDaemonSetExpected(rawObj client.Object) *apps.DaemonSet 
 					Containers: []v1.Container{
 						{
 							Name:            appLabel,
-							Args:            getPodArgs(devicePlugin),
+							Args:            GetPodArgs(devicePlugin),
 							Image:           devicePlugin.Spec.Image,
 							ImagePullPolicy: "IfNotPresent",
 							SecurityContext: &v1.SecurityContext{

@@ -64,7 +64,7 @@ func (c *controller) newDaemonSetExpected(rawObj client.Object) *apps.DaemonSet 
 				Spec: v1.PodSpec{
 					Containers: []v1.Container{
 						{
-							Args: getPodArgs(devicePlugin),
+							Args: GetPodArgs(devicePlugin),
 							Env: []v1.EnvVar{
 								{
 									Name: "NODE_NAME",
