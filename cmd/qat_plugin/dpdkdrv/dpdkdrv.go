@@ -141,6 +141,10 @@ func NewDevicePlugin(maxDevices int, kernelVfDrivers string, dpdkDriver string, 
 		return nil, errors.Errorf("wrong allocation policy: %s", preferredAllocationPolicy)
 	}
 
+	if preferredAllocationPolicy == "balanced" && maxDevices <= 16 {
+		return nil, errors.Errorf("policy 'balanced' is meaningless when maxDevices <= 16")
+	}
+
 	return newDevicePlugin(pciDriverDirectory, pciDeviceDirectory, maxDevices, kernelDrivers, dpdkDriver, allocationPolicyFunc), nil
 }
 
@@ -558,7 +562,6 @@ func getCurrentDriver(device string) string {
 func (dp *DevicePlugin) scan() (dpapi.DeviceTree, error) {
 	devTree := dpapi.NewDeviceTree()
 	n := 0
-
 	for _, vfDevice := range dp.getVfDevices() {
 		vfBdf := filepath.Base(vfDevice)
 
