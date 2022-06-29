@@ -1,0 +1,9 @@
+FROM debian:unstable
+
+COPY demo/dlb-init.sh /usr/bin/
+ENTRYPOINT [ "/bin/sh", "/usr/bin/dlb-init.sh"]
+
+#include "default_labels.docker"
+LABEL name='intel-dlb-initcontainer'
+LABEL summary='Intel® DLB initcontainer for Kubernetes'
+LABEL description='Intel DLB initcontainer enables DLB VF devices from each PF, and configures them'
