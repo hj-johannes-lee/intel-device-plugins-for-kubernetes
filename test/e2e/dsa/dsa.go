@@ -60,7 +60,7 @@ func describe() {
 		framework.Failf("unable to locate %q: %v", demoYaml, err)
 	}
 
-	ginkgo.It("runs DSA plugin and a demo workload", func() {
+	ginkgo.It("runs DSA plugin", func() {
 		ginkgo.By("deploying DSA plugin")
 		e2ekubectl.RunKubectlOrDie(f.Namespace.Name, "create", "configmap", "intel-dsa-config", "--from-file="+configmap)
 
@@ -79,12 +79,16 @@ func describe() {
 		if err = utils.TestPodsFileSystemInfo(podList.Items); err != nil {
 			framework.Failf("container filesystem info checks failed: %v", err)
 		}
+	})
 
-		ginkgo.By("checking the resource is allocatable")
-		if err = utils.WaitForNodesWithResource(f.ClientSet, "dsa.intel.com/wq-user-dedicated", 300*time.Second); err != nil {
+	ginkgo.It("checks the availability of DSA resources", func() {
+		ginkgo.By("checking if the resource is allocatable")
+		if err := utils.WaitForNodesWithResource(f.ClientSet, "dsa.intel.com/wq-user-dedicated", 300*time.Second); err != nil {
 			framework.Failf("unable to wait for nodes to have positive allocatable resource: %v", err)
 		}
+	})
 
+	ginkgo.It("deploys a demo app", func() {
 		e2ekubectl.RunKubectlOrDie(f.Namespace.Name, "apply", "-f", demoPath)
 
 		ginkgo.By("waiting for the DSA demo to succeed")

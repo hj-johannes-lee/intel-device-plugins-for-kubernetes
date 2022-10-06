@@ -46,7 +46,7 @@ func describe() {
 	f := framework.NewDefaultFramework("sgxplugin")
 	f.NamespacePodSecurityEnforceLevel = admissionapi.LevelPrivileged
 
-	ginkgo.It("checks availability of SGX resources", func() {
+	ginkgo.It("runs SGX plugin", func() {
 		ginkgo.By("deploying SGX plugin")
 
 		deploymentWebhookPath, err := utils.LocateRepoFile(kustomizationWebhook)
@@ -76,18 +76,22 @@ func describe() {
 		if err = utils.TestPodsFileSystemInfo(podList.Items); err != nil {
 			framework.Failf("container filesystem info checks failed: %v", err)
 		}
+	})
 
-		ginkgo.By("checking the resource is allocatable")
-		if err = utils.WaitForNodesWithResource(f.ClientSet, "sgx.intel.com/epc", 150*time.Second); err != nil {
+	ginkgo.It("checks the availability of SGX resources", func() {
+		ginkgo.By("checking if the resource is allocatable")
+		if err := utils.WaitForNodesWithResource(f.ClientSet, "sgx.intel.com/epc", 150*time.Second); err != nil {
 			framework.Failf("unable to wait for nodes to have positive allocatable epc resource: %v", err)
 		}
-		if err = utils.WaitForNodesWithResource(f.ClientSet, "sgx.intel.com/enclave", 30*time.Second); err != nil {
+		if err := utils.WaitForNodesWithResource(f.ClientSet, "sgx.intel.com/enclave", 30*time.Second); err != nil {
 			framework.Failf("unable to wait for nodes to have positive allocatable enclave resource: %v", err)
 		}
-		if err = utils.WaitForNodesWithResource(f.ClientSet, "sgx.intel.com/provision", 30*time.Second); err != nil {
+		if err := utils.WaitForNodesWithResource(f.ClientSet, "sgx.intel.com/provision", 30*time.Second); err != nil {
 			framework.Failf("unable to wait for nodes to have positive allocatable provision resource: %v", err)
 		}
+	})
 
+	ginkgo.It("deploys a pod requesting SGX resources", func() {
 		ginkgo.By("submitting a pod requesting SGX enclave resources")
 		podSpec := &v1.Pod{
 			ObjectMeta: metav1.ObjectMeta{Name: "sgxplugin-tester"},
@@ -110,7 +114,7 @@ func describe() {
 		pod, err := f.ClientSet.CoreV1().Pods(f.Namespace.Name).Create(context.TODO(), podSpec, metav1.CreateOptions{})
 		framework.ExpectNoError(err, "pod Create API error")
 
-		ginkgo.By("waiting the pod to finnish successfully")
+		ginkgo.By("waiting the pod to finish successfully")
 		e2epod.NewPodClient(f).WaitForSuccess(pod.ObjectMeta.Name, 60*time.Second)
 	})
 }

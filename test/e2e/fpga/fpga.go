@@ -46,7 +46,7 @@ const (
 )
 
 func init() {
-	ginkgo.Describe("FPGA Plugin E2E tests", describe)
+	ginkgo.Describe("FPGA Plugin E2E tests", ginkgo.Ordered, describe)
 }
 
 func describe() {
@@ -63,68 +63,73 @@ func describe() {
 	fmw := framework.NewDefaultFramework("fpgaplugin-e2e")
 	fmw.NamespacePodSecurityEnforceLevel = admissionapi.LevelPrivileged
 
-	ginkgo.It("Run FPGA plugin tests", func() {
-		// Run region test case twice to ensure that device is reprogrammed at least once
-		runTestCase(fmw, pluginKustomizationPath, mappingsCollectionPath, "region", arria10NodeResource, nlb3PodResource, "nlb3", "nlb0")
-		runTestCase(fmw, pluginKustomizationPath, mappingsCollectionPath, "region", arria10NodeResource, nlb0PodResource, "nlb0", "nlb3")
-		// Run af test case
-		runTestCase(fmw, pluginKustomizationPath, mappingsCollectionPath, "af", nlb0NodeResource, nlb0PodResourceAF, "nlb0", "nlb3")
-	})
+	// Run region test case twice to ensure that device is reprogrammed at least once
+	runTestCase(fmw, pluginKustomizationPath, mappingsCollectionPath, "region", arria10NodeResource, nlb3PodResource, "nlb3", "nlb0")
+	runTestCase(fmw, pluginKustomizationPath, mappingsCollectionPath, "region", arria10NodeResource, nlb0PodResource, "nlb0", "nlb3")
+	// Run af test case
+	runTestCase(fmw, pluginKustomizationPath, mappingsCollectionPath, "af", nlb0NodeResource, nlb0PodResourceAF, "nlb0", "nlb3")
 }
 
 func runTestCase(fmw *framework.Framework, pluginKustomizationPath, mappingsCollectionPath, pluginMode, nodeResource, podResource, cmd1, cmd2 string) {
-	tmpDir, err := os.MkdirTemp("", "fpgaplugine2etest-"+fmw.Namespace.Name)
-	if err != nil {
-		framework.Failf("unable to create temp directory: %v", err)
-	}
+	ginkgo.It("runs FPGA plugin", func() {
+		tmpDir, err := os.MkdirTemp("", "fpgaplugine2etest-"+fmw.Namespace.Name)
+		if err != nil {
+			framework.Failf("unable to create temp directory: %v", err)
+		}
 
-	defer os.RemoveAll(tmpDir)
+		defer os.RemoveAll(tmpDir)
 
-	err = utils.CreateKustomizationOverlay(fmw.Namespace.Name, filepath.Dir(pluginKustomizationPath)+"/../overlays/"+pluginMode, tmpDir)
-	if err != nil {
-		framework.Failf("unable to kustomization overlay: %v", err)
-	}
+		err = utils.CreateKustomizationOverlay(fmw.Namespace.Name, filepath.Dir(pluginKustomizationPath)+"/../overlays/"+pluginMode, tmpDir)
+		if err != nil {
+			framework.Failf("unable to kustomization overlay: %v", err)
+		}
 
-	ginkgo.By(fmt.Sprintf("namespace %s: deploying FPGA plugin in %s mode", fmw.Namespace.Name, pluginMode))
-	e2ekubectl.RunKubectlOrDie(fmw.Namespace.Name, "apply", "-k", tmpDir)
+		ginkgo.By(fmt.Sprintf("namespace %s: deploying FPGA plugin in %s mode", fmw.Namespace.Name, pluginMode))
+		e2ekubectl.RunKubectlOrDie(fmw.Namespace.Name, "apply", "-k", tmpDir)
 
-	ginkgo.By("deploying mappings")
-	e2ekubectl.RunKubectlOrDie(fmw.Namespace.Name, "apply", "-f", mappingsCollectionPath)
+		ginkgo.By("deploying mappings")
+		e2ekubectl.RunKubectlOrDie(fmw.Namespace.Name, "apply", "-f", mappingsCollectionPath)
 
-	waitForPod(fmw, "intel-fpga-plugin")
+		waitForPod(fmw, "intel-fpga-plugin")
+	})
 
-	resource := v1.ResourceName(nodeResource)
+	ginkgo.It("checks the availability of resources", func() {
+		resource := v1.ResourceName(nodeResource)
 
-	ginkgo.By("checking if the resource is allocatable")
+		ginkgo.By("checking if the resource is allocatable")
 
-	if err := utils.WaitForNodesWithResource(fmw.ClientSet, resource, 30*time.Second); err != nil {
-		framework.Failf("unable to wait for nodes to have positive allocatable resource: %v", err)
-	}
+		if err := utils.WaitForNodesWithResource(fmw.ClientSet, resource, 30*time.Second); err != nil {
+			framework.Failf("unable to wait for nodes to have positive allocatable resource: %v", err)
+		}
+	})
 
-	resource = v1.ResourceName(podResource)
-	image := "intel/opae-nlb-demo:devel"
+	ginkgo.It("deploys a pod requesting FPGA resources", func() {
+		resource := v1.ResourceName(podResource)
+		image := "intel/opae-nlb-demo:devel"
 
-	ginkgo.By("submitting a pod requesting correct FPGA resources")
+		ginkgo.By("submitting a pod requesting correct FPGA resources")
 
-	pod := createPod(fmw, fmt.Sprintf("fpgaplugin-%s-%s-%s-correct", pluginMode, cmd1, cmd2), resource, image, []string{cmd1, "-S0"})
+		pod := createPod(fmw, fmt.Sprintf("fpgaplugin-%s-%s-%s-correct", pluginMode, cmd1, cmd2), resource, image, []string{cmd1, "-S0"})
 
-	ginkgo.By("waiting the pod to finish successfully")
-	e2epod.NewPodClient(fmw).WaitForSuccess(pod.ObjectMeta.Name, 60*time.Second)
-	// If WaitForSuccess fails, ginkgo doesn't show the logs of the failed container.
-	// Replacing WaitForSuccess with WaitForFinish + 'kubelet logs' would show the logs
-	//fmw.PodClient().WaitForFinish(pod.ObjectMeta.Name, 60*time.Second)
-	//framework.RunKubectlOrDie(fmw.Namespace.Name, "logs", pod.ObjectMeta.Name)
+		ginkgo.By("waiting the pod to finish successfully")
+		e2epod.NewPodClient(fmw).WaitForSuccess(pod.ObjectMeta.Name, 60*time.Second)
+		// If WaitForSuccess fails, ginkgo doesn't show the logs of the failed container.
+		// Replacing WaitForSuccess with WaitForFinish + 'kubelet logs' would show the logs
+		//fmw.PodClient().WaitForFinish(pod.ObjectMeta.Name, 60*time.Second)
+		//framework.RunKubectlOrDie(fmw.Namespace.Name, "logs", pod.ObjectMeta.Name)
 
-	ginkgo.By("submitting a pod requesting incorrect FPGA resources")
+		ginkgo.By("submitting a pod requesting incorrect FPGA resources")
 
-	pod = createPod(fmw, fmt.Sprintf("fpgaplugin-%s-%s-%s-incorrect", pluginMode, cmd1, cmd2), resource, image, []string{cmd2, "-S0"})
+		pod = createPod(fmw, fmt.Sprintf("fpgaplugin-%s-%s-%s-incorrect", pluginMode, cmd1, cmd2), resource, image, []string{cmd2, "-S0"})
 
-	ginkgo.By("waiting the pod failure")
-	utils.WaitForPodFailure(fmw, pod.ObjectMeta.Name, 60*time.Second)
+		ginkgo.By("waiting the pod failure")
+		utils.WaitForPodFailure(fmw, pod.ObjectMeta.Name, 60*time.Second)
+	})
 }
 
 func createPod(fmw *framework.Framework, name string, resourceName v1.ResourceName, image string, command []string) *v1.Pod {
-	resourceList := v1.ResourceList{resourceName: resource.MustParse("1"),
+	resourceList := v1.ResourceList{
+		resourceName:    resource.MustParse("1"),
 		"cpu":           resource.MustParse("1"),
 		"hugepages-2Mi": resource.MustParse("20Mi")}
 	podSpec := &v1.Pod{
