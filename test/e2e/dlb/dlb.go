@@ -48,7 +48,7 @@ func describe() {
 		framework.Failf("unable to locate %q: %v", kustomizationYaml, err)
 	}
 
-	ginkgo.It("runs DLB plugin and a demo workload", func() {
+	ginkgo.It("runs DLB plugin", func() {
 		ginkgo.By("deploying DLB plugin")
 		framework.RunKubectlOrDie(f.Namespace.Name, "apply", "-k", filepath.Dir(kustomizationPath))
 
@@ -65,14 +65,23 @@ func describe() {
 		if err = utils.TestPodsFileSystemInfo(podList.Items); err != nil {
 			framework.Failf("container filesystem info checks failed: %v", err)
 		}
+	})
 
+	ginkgo.It("checks the availability of DLB resources", func() {
 		for _, resource := range []v1.ResourceName{"dlb.intel.com/pf", "dlb.intel.com/vf"} {
 			ginkgo.By("checking the " + resource.String() + " resource is allocatable")
 			if err = utils.WaitForNodesWithResource(f.ClientSet, resource, 30*time.Second); err != nil {
 				framework.Failf("unable to wait for nodes to have positive allocatable resource %s: %v", resource, err)
 			}
 		}
+	})
 
+	ginkgo.It("deploys demo apps", func() {
+		image := "intel/dlb-libdlb-demo"
+		availableContainerImages := framework.RunKubectlOrDie(f.Namespace.Name, "get", "pods", "--all-namespaces", "-o", "jsonpath=\"{.items[*].spec.containers[*].image}\"")
+		if !strings.Contains(availableContainerImages, image) {
+			ginkgo.Skip("skip running a pod: not found image " + image)
+		}
 		for function, yaml := range map[string]string{"PF": demoPFYaml, "VF": demoVFYaml} {
 			demoPath, err := utils.LocateRepoFile(yaml)
 			if err != nil {

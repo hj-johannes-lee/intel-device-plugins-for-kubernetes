@@ -140,28 +140,28 @@ TAG?=devel
 export TAG
 
 e2e-fpga:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "FPGA" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "FPGA" -delete-namespace=false
 
 e2e-qat:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "QAT plugin in DPDK mode" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "QAT plugin in DPDK mode" -delete-namespace=false
 
 e2e-qat4:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "QAT Gen4" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "QAT Gen4" -delete-namespace=false
 
 e2e-sgx:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "SGX" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "SGX" -delete-namespace=false
 
 e2e-gpu:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "GPU" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "GPU" -delete-namespace=false
 
 e2e-dsa:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "DSA" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "DSA" -delete-namespace=false
 
 e2e-iaa:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "IAA" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "IAA" -delete-namespace=false
 
 e2e-dlb:
-	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "DLB" -delete-namespace-on-failure=false
+	@$(GO) test -v ./test/e2e/... -ginkgo.v -ginkgo.progress -ginkgo.focus "DLB" -delete-namespace=false
 
 terrascan:
 	@ls deployments/*/kustomization.yaml | while read f ; \
