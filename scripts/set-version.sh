@@ -15,8 +15,22 @@ if [ $# != 1 ] || [ "$1" = "?" ] || [ "$1" = "--help" ]; then
     exit 1
 fi
 
-files=$(git grep -l '^TAG?*=\|intel/accel-config-demo:\|intel/crypto-perf:\|intel/opae-nlb-demo:\|intel/openssl-qat-engine:\|intel/dlb-libdlb-demo:\|intel/intel-[^ ]*:\|version=\|appVersion:\|tag:' Makefile deployments demo/*accel-config*.yaml demo/*fpga*.yaml demo/*openssl*.yaml demo/dlb-libdlb*.yaml pkg/controllers/*/*_test.go build/docker/*.Dockerfile test/e2e/*/*.go)
-
+# change all devel in related files
+# :devel =devel :-devel 'devel' => <image version>
+files=$(git grep -l "\(:\|=\|:-\|'\)devel\(.*\)" build/docker Jenkinsfile demo/build-image.sh pkg/controllers/*/*_test.go pkg/controllers/reconciler_test.go test/e2e/*/*.go)
 for file in $files; do
-    sed -i -e "s;\(^TAG?*=\|intel/accel-config-demo:\|intel/crypto-perf:\|intel/opae-nlb-demo:\|intel/openssl-qat-engine:\|intel/dlb-libdlb-demo:\|intel/intel-[^ ]*:\|version=\|appVersion: [^ ]\|tag: [^ ]\)[^ \"]*;\1$1;g" "$file";
+    sed -i -e "s;\(:\|=\|:-\|'\)devel\(.*\);\1$1\2;g" $file
+done
+
+# change yaml files' image version
+# devel or 0.xy.z => <image version>
+files=$(git grep -l '' *.yaml)
+for file in $files; do
+   sed -i -e "s;\(image\|initImage\|containerImage\|InitImage\)\(:.*intel/.*:\).*;\1\2$1;g" $file
+done
+
+# change ImageMinVersion to <image version>
+files=$(git grep -l '\(ImageMinVersion.*"\).*\("\)' pkg/controllers/reconciler.go)
+for file in $files; do
+   sed -i -e "s;\(ImageMinVersion.*\"\).*\(\"\);\1$1\2;g" $file
 done
