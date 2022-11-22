@@ -91,5 +91,9 @@ func (r *DlbDevicePlugin) validatePlugin() error {
 		}
 	}
 
+	if len(r.Spec.ProvisioningConfig) > 0 && len(r.Spec.InitImage) == 0 {
+		return errors.Errorf("ProvisioningConfig is set with no InitImage")
+	}
+
 	return validatePluginImage(r.Spec.Image, "intel-dlb-plugin", dlbMinVersion)
 }

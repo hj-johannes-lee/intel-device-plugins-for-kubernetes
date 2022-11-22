@@ -59,4 +59,6 @@ LABEL version='devel'
 LABEL release='1'
 COPY --from=builder /install_root /
 COPY demo/dlb-init.sh /usr/bin/
+COPY demo/dlb.conf /dlb-init/
+WORKDIR /dlb-init
 ENTRYPOINT [ "/bin/bash", "dlb-init.sh"]

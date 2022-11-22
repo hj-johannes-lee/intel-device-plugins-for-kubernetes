@@ -67,6 +67,10 @@ spec:
                 description: NodeSelector provides a simple way to constrain device
                   plugin pods to nodes with particular labels.
                 type: object
+              provisioningConfig:
+                description: ProvisioningConfig is a ConfigMap used to pass the configuration
+                  of DLB devices into dlb initcontainer.
+                type: string
             type: object
           status:
             description: DlbDevicePluginStatus defines the observed state of DlbDevicePlugin.

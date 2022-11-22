@@ -34,7 +34,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-const ownerKey = ".metadata.controller.dlb"
+const (
+	ownerKey          = ".metadata.controller.dlb"
+	initcontainerName = "intel-dlb-initcontainer"
+)
 
 var defaultNodeSelector map[string]string = deployments.DLBPluginDaemonSet().Spec.Template.Spec.NodeSelector
 
@@ -114,7 +117,7 @@ func (c *controller) UpdateDaemonSet(rawObj client.Object, ds *apps.DaemonSet) (
 	if dp.Spec.InitImage == "" {
 		if ds.Spec.Template.Spec.InitContainers != nil {
 			ds.Spec.Template.Spec.InitContainers = nil
-			ds.Spec.Template.Spec.Volumes = removeVolume(ds.Spec.Template.Spec.Volumes, "sysfs-devices", "sysfs-driver-dlb2")
+			ds.Spec.Template.Spec.Volumes = removeVolume(ds.Spec.Template.Spec.Volumes, "sysfs-devices", "sysfs-driver-dlb2", "dlb-config")
 			updated = true
 		}
 	} else {
@@ -216,6 +219,25 @@ func setInitContainer(dsSpec *v1.PodSpec, dpSpec devicepluginv1.DlbDevicePluginS
 
 	addVolumeIfMissing(dsSpec, "sysfs-devices", "/sys/devices", v1.HostPathDirectoryOrCreate)
 	addVolumeIfMissing(dsSpec, "sysfs-driver-dlb2", "/sys/bus/pci/drivers/dlb2", v1.HostPathDirectoryOrCreate)
+
+	if dpSpec.ProvisioningConfig != "" {
+		dsSpec.Volumes = append(dsSpec.Volumes, v1.Volume{
+			Name: "dlb-config",
+			VolumeSource: v1.VolumeSource{
+				ConfigMap: &v1.ConfigMapVolumeSource{
+					LocalObjectReference: v1.LocalObjectReference{Name: dpSpec.ProvisioningConfig}},
+			},
+		})
+
+		for i, initcontainer := range dsSpec.InitContainers {
+			if initcontainer.Name == initcontainerName {
+				dsSpec.InitContainers[i].VolumeMounts = append(dsSpec.InitContainers[i].VolumeMounts, v1.VolumeMount{
+					Name:      "dlb-config",
+					MountPath: "dlb/conf",
+				})
+			}
+		}
+	}
 }
 
 func addVolumeIfMissing(spec *v1.PodSpec, name, path string, hpType v1.HostPathType) {

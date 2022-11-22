@@ -34,6 +34,9 @@ type DlbDevicePluginSpec struct {
 	// InitImage is a container image with a script that initializes devices.
 	InitImage string `json:"initImage,omitempty"`
 
+	// ProvisioningConfig is a ConfigMap used to pass the configuration of DLB devices into dlb initcontainer.
+	ProvisioningConfig string `json:"provisioningConfig,omitempty"`
+
 	// LogLevel sets the plugin's log level.
 	// +kubebuilder:validation:Minimum=0
 	LogLevel int `json:"logLevel,omitempty"`
