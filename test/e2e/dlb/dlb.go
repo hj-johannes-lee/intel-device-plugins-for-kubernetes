@@ -68,38 +68,49 @@ func describe() {
 		}
 	})
 
-	ginkgo.It("checks the availability of DLB resources", func() {
-		for _, resource := range []v1.ResourceName{"dlb.intel.com/pf", "dlb.intel.com/vf"} {
-			ginkgo.By("checking the " + resource.String() + " resource is allocatable")
-			if err = utils.WaitForNodesWithResource(f.ClientSet, resource, 30*time.Second); err != nil {
-				framework.Failf("unable to wait for nodes to have positive allocatable resource %s: %v", resource, err)
-			}
-		}
+	ginkgo.It("checks the availability of DLB PF resources", func() {
+		checksResourceAvailability(v1.ResourceName("dlb.intel.com/pf"), f)
 	})
 
-	ginkgo.It("deploys demo apps", func() {
-		for function, yaml := range map[string]string{"PF": demoPFYaml, "VF": demoVFYaml} {
-			demoPath, err := utils.LocateRepoFile(yaml)
-			if err != nil {
-				framework.Failf("unable to locate %q: %v", yaml, err)
-			}
-
-			podName := strings.TrimSuffix(filepath.Base(yaml), filepath.Ext(yaml))
-
-			ginkgo.By("submitting a pod requesting DLB " + function + " resources")
-			e2ekubectl.RunKubectlOrDie(f.Namespace.Name, "apply", "-f", demoPath)
-
-			ginkgo.By("waiting for the DLB demo to succeed")
-			e2epod.NewPodClient(f).WaitForSuccess(podName, 200*time.Second)
-
-			ginkgo.By("getting workload log")
-			log, err := e2epod.GetPodLogs(f.ClientSet, f.Namespace.Name, podName, podName)
-
-			if err != nil {
-				framework.Failf("unable to get log from pod: %v", err)
-			}
-
-			framework.Logf("log output: %s", log)
-		}
+	ginkgo.It("deploys PF demo app", func() {
+		runDemoApp("PF", demoPFYaml, f)
 	})
+
+	ginkgo.It("checks the availability of DLB VF resources", func() {
+		checksResourceAvailability(v1.ResourceName("dlb.intel.com/vf"), f)
+	})
+
+	ginkgo.It("deploys VF demo app", func() {
+		runDemoApp("VF", demoVFYaml, f)
+	})
+}
+
+func checksResourceAvailability(resource v1.ResourceName, f *framework.Framework) {
+	ginkgo.By("checking if the " + resource.String() + " resource is allocatable")
+	if err := utils.WaitForNodesWithResource(f.ClientSet, resource, 30*time.Second); err != nil {
+		framework.Failf("unable to wait for nodes to have positive allocatable resource %s: %v", resource, err)
+	}
+}
+func runDemoApp(yaml, function string, f *framework.Framework) {
+	demoPath, err := utils.LocateRepoFile(yaml)
+	if err != nil {
+		framework.Failf("unable to locate %q: %v", yaml, err)
+	}
+
+	podName := strings.TrimSuffix(filepath.Base(yaml), filepath.Ext(yaml))
+
+	ginkgo.By("submitting a pod requesting DLB " + function + " resources")
+	e2ekubectl.RunKubectlOrDie(f.Namespace.Name, "apply", "-f", demoPath)
+
+	ginkgo.By("waiting for the DLB demo to succeed")
+	e2epod.NewPodClient(f).WaitForSuccess(podName, 200*time.Second)
+
+	ginkgo.By("getting workload log")
+	log, err := e2epod.GetPodLogs(f.ClientSet, f.Namespace.Name, podName, podName)
+
+	if err != nil {
+		framework.Failf("unable to get log from pod: %v", err)
+	}
+
+	framework.Logf("log output: %s", log)
 }
