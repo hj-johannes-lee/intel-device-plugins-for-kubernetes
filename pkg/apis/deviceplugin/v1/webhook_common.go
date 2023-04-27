@@ -16,15 +16,23 @@ package v1
 
 import (
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/util/version"
 )
 
+const sha256RE = "@sha256:[0-9a-f]{64}$"
+
 // common functions for webhooks
 
 func validatePluginImage(image, expectedImageName string, expectedMinVersion *version.Version) error {
+	imageRe := regexp.MustCompile(expectedImageName + sha256RE)
+	if imageRe.MatchString(image) {
+		return nil
+	}
+
 	// Ignore registry, vendor and extract the image name with the tag
 	parts := strings.SplitN(filepath.Base(image), ":", 2)
 	if len(parts) != 2 {
