@@ -10,7 +10,7 @@ metadata:
   #   container.apparmor.security.beta.kubernetes.io/intel-dlb-plugin: unconfined
 spec:
   image: intel/intel-dlb-plugin:0.26.0
-  initImage: intel/intel-dlb-initcontainer:0.26.0
+  initImage: intel/intel-dlb-initcontainer-wrong@sha256:aa8a24770fa459fea7e8dea830d761c2a0435fcae76e4211712715a72a86e952
   logLevel: 4
   nodeSelector:
     intel.feature.node.kubernetes.io/dlb: 'true'

@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - image: docker.io/intel/intel-deviceplugin-operator:devel
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: manager
         livenessProbe:
           httpGet:

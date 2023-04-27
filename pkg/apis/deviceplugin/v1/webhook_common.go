@@ -43,7 +43,7 @@ func validatePluginImage(image, expectedImageName string, expectedMinVersion *ve
 	versionStr := parts[1]
 
 	if imageName != expectedImageName {
-		return errors.Errorf("incorrect image name %q. Make sure you use '<vendor>/%s:<version>'", imageName, expectedImageName)
+		return errors.Errorf("incorrect image name %q. Make sure you use '<vendor>/%s.", strings.TrimSuffix(imageName, "@sha256"), expectedImageName)
 	}
 
 	ver, err := version.ParseSemantic(versionStr)
