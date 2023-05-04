@@ -18,12 +18,12 @@ spec:
       requests:
         cpu: "3"
         memory: "128Mi"
-        qat.intel.com/generic: '4'
+        qat.intel.com/dc: '4'
         hugepages-2Mi: "128Mi"
       limits:
         cpu: "3"
         memory: "128Mi"
-        qat.intel.com/generic: '4'
+        qat.intel.com/dc: '4'
         hugepages-2Mi: "128Mi"
     securityContext:
       readOnlyRootFilesystem: true
