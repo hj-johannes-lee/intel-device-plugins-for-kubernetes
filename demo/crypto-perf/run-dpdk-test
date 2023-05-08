@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # expect $TESTCMD, $PTEST, and $QAT* are set
 set -u
@@ -20,6 +20,6 @@ fi
 
 LCORE=$(cat "${CGROUP_PATH}"/cpuset.cpus)
 
-EAL="--no-telemetry -l ${LCORE} ${PCI_ALLOWLIST}"
+EAL="--log-level=pmd.qat.dp:8 --no-telemetry -l ${LCORE} ${PCI_ALLOWLIST}"
 
 dpdk-test-"${TESTCMD}"-perf ${EAL} -- ${PTEST} \

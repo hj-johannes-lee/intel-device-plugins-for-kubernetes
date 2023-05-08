@@ -5,8 +5,8 @@ metadata:
 spec:
   containers:
   - name: crypto-perf
-    image: intel/crypto-perf:devel
-    imagePullPolicy: IfNotPresent
+    image: intel/crypto-perf:devel2
+    imagePullPolicy: Always
     command: [ "/bin/bash", "-c", "--" ]
     args: [ "while true; do sleep 300000; done;" ]
     volumeMounts:

@@ -1,0 +1,27 @@
+From 5089a4a090ada576febe959bccc5677de89222e3 Mon Sep 17 00:00:00 2001
+From: Arek Kusztal <arkadiuszx.kusztal@intel.com>
+Date: Thu, 4 May 2023 13:24:13 +0000
+Subject: [PATCH] qat: print svc map
+
+---
+ drivers/common/qat/dev/qat_dev_gen4.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/common/qat/dev/qat_dev_gen4.c b/drivers/common/qat/dev/qat_dev_gen4.c
+index 1b3a5deabf..74af7de3af 100644
+--- a/drivers/common/qat/dev/qat_dev_gen4.c
++++ b/drivers/common/qat/dev/qat_dev_gen4.c
+@@ -39,7 +39,9 @@ qat_query_svc_gen4(struct qat_pci_device *qat_dev, uint8_t *val)
+ 	pf2vf_msg.msg_type = ADF_VF2PF_MSGTYPE_GET_SMALL_BLOCK_REQ;
+ 	pf2vf_msg.block_hdr = ADF_VF2PF_BLOCK_MSG_GET_RING_TO_SVC_REQ;
+ 	pf2vf_msg.msg_data = 2;
+-	return qat_pf2vf_exch_msg(qat_dev, pf2vf_msg, 2, val);
++	int ret = qat_pf2vf_exch_msg(qat_dev, pf2vf_msg, 2, val);
++	QAT_LOG(WARNING, "\nSVC MAP = 0x%hx", *(uint16_t *)val);
++	return ret;
+ }
+ 
+ static int
+-- 
+2.25.1
+
