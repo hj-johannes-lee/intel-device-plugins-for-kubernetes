@@ -37,6 +37,13 @@ spec:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
         imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: 1
+          limits:
+            memory: "50Mi"
+            cpu: 1
         volumeMounts:
         - name: devdir
           mountPath: /dev/vfio

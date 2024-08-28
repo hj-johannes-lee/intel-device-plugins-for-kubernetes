@@ -1,0 +1,264 @@
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/dlb	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/dsa	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/fpga	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/fpgaadmissionwebhook	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/gpu	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/iaa	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/operator	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/qat	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/sgx	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/sgxadmissionwebhook	[no test files]
+?   	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e/utils	[no test files]
+  I0826 08:43:35.959955 204529 test_context.go:561] The --provider flag is not set. Continuing as if --provider=skeleton had been used.
+=== RUN   TestDevicePlugins
+Running Suite: E2E Device Plugins Suite - /home/hj-johannes/intel-device-plugins-for-kubernetes/test/e2e
+========================================================================================================
+Random Seed: [1m1724687015[0m
+
+Will run [1m4[0m of [1m44[0m specs
+[38;5;243m------------------------------[0m
+[0m[1m[SynchronizedBeforeSuite] [0m
+[38;5;243m/home/hj-johannes/intel-device-plugins-for-kubernetes/test/e2e/deviceplugins_suite_test.go:52[0m
+  > Enter [1m[SynchronizedBeforeSuite][0m TOP-LEVEL [38;5;243m@ 08/26/24 08:43:35.961[0m
+  I0826 08:43:35.962036 204529 util.go:499] >>> kubeConfig: /etc/rancher/rke2/rke2.yaml
+  I0826 08:43:35.963977 204529 helper.go:48] Waiting up to 30m0s for all (but 0) nodes to be schedulable
+  I0826 08:43:35.997808 204529 deviceplugins_suite_test.go:99] e2e test version: v0.0.0-master+$Format:%H$
+  I0826 08:43:36.000661 204529 deviceplugins_suite_test.go:107] kube-apiserver version: v1.28.12+rke2r1
+  I0826 08:43:36.000861 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=node-feature-discovery apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/nfd'
+  I0826 08:43:37.713311 204529 builder.go:146] stderr: ""
+  I0826 08:43:37.713597 204529 builder.go:147] stdout: "namespace/node-feature-discovery created\ncustomresourcedefinition.apiextensions.k8s.io/nodefeaturegroups.nfd.k8s-sigs.io unchanged\ncustomresourcedefinition.apiextensions.k8s.io/nodefeaturerules.nfd.k8s-sigs.io unchanged\ncustomresourcedefinition.apiextensions.k8s.io/nodefeatures.nfd.k8s-sigs.io unchanged\nserviceaccount/nfd-gc created\nserviceaccount/nfd-master created\nserviceaccount/nfd-worker created\nrole.rbac.authorization.k8s.io/nfd-worker created\nclusterrole.rbac.authorization.k8s.io/nfd-gc unchanged\nclusterrole.rbac.authorization.k8s.io/nfd-master unchanged\nrolebinding.rbac.authorization.k8s.io/nfd-worker created\nclusterrolebinding.rbac.authorization.k8s.io/nfd-gc unchanged\nclusterrolebinding.rbac.authorization.k8s.io/nfd-master unchanged\nconfigmap/nfd-master-conf created\nconfigmap/nfd-worker-conf created\ndeployment.apps/nfd-gc created\ndeployment.apps/nfd-master created\ndaemonset.apps/nfd-worker created\n"
+  I0826 08:43:37.713685 204529 utils.go:354] namespace/node-feature-discovery created
+  customresourcedefinition.apiextensions.k8s.io/nodefeaturegroups.nfd.k8s-sigs.io unchanged
+  customresourcedefinition.apiextensions.k8s.io/nodefeaturerules.nfd.k8s-sigs.io unchanged
+  customresourcedefinition.apiextensions.k8s.io/nodefeatures.nfd.k8s-sigs.io unchanged
+  serviceaccount/nfd-gc created
+  serviceaccount/nfd-master created
+  serviceaccount/nfd-worker created
+  role.rbac.authorization.k8s.io/nfd-worker created
+  clusterrole.rbac.authorization.k8s.io/nfd-gc unchanged
+  clusterrole.rbac.authorization.k8s.io/nfd-master unchanged
+  rolebinding.rbac.authorization.k8s.io/nfd-worker created
+  clusterrolebinding.rbac.authorization.k8s.io/nfd-gc unchanged
+  clusterrolebinding.rbac.authorization.k8s.io/nfd-master unchanged
+  configmap/nfd-master-conf created
+  configmap/nfd-worker-conf created
+  deployment.apps/nfd-gc created
+  deployment.apps/nfd-master created
+  daemonset.apps/nfd-worker created
+
+  I0826 08:43:37.714383 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=node-feature-discovery apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/nfd/overlays/node-feature-rules'
+  I0826 08:43:38.041430 204529 builder.go:146] stderr: ""
+  I0826 08:43:38.041607 204529 builder.go:147] stdout: "nodefeaturerule.nfd.k8s-sigs.io/intel-dp-devices unchanged\nnodefeaturerule.nfd.k8s-sigs.io/intel-gpu-platform-labeling unchanged\n"
+  I0826 08:43:38.041632 204529 utils.go:354] nodefeaturerule.nfd.k8s-sigs.io/intel-dp-devices unchanged
+  nodefeaturerule.nfd.k8s-sigs.io/intel-gpu-platform-labeling unchanged
+
+  < Exit [1m[SynchronizedBeforeSuite][0m TOP-LEVEL [38;5;243m@ 08/26/24 08:43:54.129 (18.167s)[0m
+  > Enter [1m[SynchronizedBeforeSuite][0m TOP-LEVEL [38;5;243m@ 08/26/24 08:43:54.129[0m
+  < Exit [1m[SynchronizedBeforeSuite][0m TOP-LEVEL [38;5;243m@ 08/26/24 08:43:54.129 (0s)[0m
+[38;5;10m[SynchronizedBeforeSuite] PASSED [18.168 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[0mQAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243mWhen QAT resources are available with crypto (cy) services enabled [Resource:cy] [0m[1mdeploys a crypto pod (openssl) requesting QAT resources [App:openssl][0m
+[38;5;243m/home/hj-johannes/intel-device-plugins-for-kubernetes/test/e2e/qat/qatplugin_dpdk.go:100[0m
+  > Enter [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:43:54.13[0m
+  [1mSTEP:[0m Creating a kubernetes client [38;5;243m@ 08/26/24 08:43:54.13[0m
+  I0826 08:43:54.130453 204529 util.go:499] >>> kubeConfig: /etc/rancher/rke2/rke2.yaml
+  [1mSTEP:[0m Building a namespace api object, basename qatplugindpdk [38;5;243m@ 08/26/24 08:43:54.131[0m
+  [1mSTEP:[0m Waiting for a default service account to be provisioned in namespace [38;5;243m@ 08/26/24 08:43:54.143[0m
+  [1mSTEP:[0m Waiting for kube-root-ca.crt to be provisioned in namespace [38;5;243m@ 08/26/24 08:43:54.148[0m
+  < Exit [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:43:54.153 (23ms)[0m
+  > Enter [1m[BeforeEach][0m When QAT resources are available with crypto (cy) services enabled [Resource:cy] [38;5;243m@ 08/26/24 08:43:54.153[0m
+  [1mSTEP:[0m creating a configMap before plugin gets deployed [38;5;243m@ 08/26/24 08:43:54.153[0m
+  I0826 08:43:54.153830 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-9941 create configmap --from-literal qat.conf=ServicesEnabled=sym;asym qat-config'
+  I0826 08:43:54.252357 204529 builder.go:146] stderr: ""
+  I0826 08:43:54.252434 204529 builder.go:147] stdout: "configmap/qat-config created\n"
+  [1mSTEP:[0m setting resourceName for cy services [38;5;243m@ 08/26/24 08:43:54.252[0m
+  < Exit [1m[BeforeEach][0m When QAT resources are available with crypto (cy) services enabled [Resource:cy] [38;5;243m@ 08/26/24 08:43:54.252 (99ms)[0m
+  > Enter [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:43:54.252[0m
+  [1mSTEP:[0m deploying QAT plugin in DPDK mode [38;5;243m@ 08/26/24 08:43:54.252[0m
+  I0826 08:43:54.252850 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-9941 apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:43:54.548585 204529 builder.go:146] stderr: "Warning: would violate PodSecurity \"restricted:latest\": forbidden AppArmor profile (container.apparmor.security.beta.kubernetes.io/intel-qat-plugin=\"unconfined\"), privileged (container \"intel-qat-initcontainer\" must not set securityContext.privileged=true), seLinuxOptions (container \"intel-qat-plugin\" set forbidden securityContext.seLinuxOptions: type \"container_device_plugin_t\"), allowPrivilegeEscalation != false (container \"intel-qat-initcontainer\" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.capabilities.drop=[\"ALL\"]), restricted volume types (volumes \"sysfs\", \"devdir\", \"debugfsdir\", \"pcidir\", \"kubeletsockets\" use restricted volume type \"hostPath\"), runAsNonRoot != true (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.runAsNonRoot=true), seccompProfile (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.seccompProfile.type to \"RuntimeDefault\" or \"Localhost\")\n"
+  I0826 08:43:54.548673 204529 builder.go:147] stdout: "daemonset.apps/intel-qat-plugin-e2e created\n"
+  [1mSTEP:[0m checking if the resource is allocatable [38;5;243m@ 08/26/24 08:43:54.548[0m
+  I0826 08:43:54.548752 204529 utils.go:57] Waiting up to 30s for any positive allocatable resource "qat.intel.com/cy"
+  I0826 08:43:54.552935 204529 utils.go:75] Found 4 of "qat.intel.com/cy". Elapsed: 4.159394ms
+  [1mSTEP:[0m undeploying QAT plugin [38;5;243m@ 08/26/24 08:43:54.552[0m
+  I0826 08:43:54.553057 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-9941 delete -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:43:54.801285 204529 builder.go:146] stderr: ""
+  I0826 08:43:54.801370 204529 builder.go:147] stdout: "daemonset.apps \"intel-qat-plugin-e2e\" deleted\n"
+  < Exit [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:43:54.801 (549ms)[0m
+  > Enter [1m[It][0m deploys a crypto pod (openssl) requesting QAT resources [App:openssl] [38;5;243m@ 08/26/24 08:43:54.801[0m
+  [1mSTEP:[0m submitting a pod requesting QATqat.intel.com/cyresources [38;5;243m@ 08/26/24 08:43:54.801[0m
+  W0826 08:43:54.811364  204529 warnings.go:70] would violate PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "openssl-qat-engine" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "openssl-qat-engine" must set securityContext.capabilities.drop=["ALL"]; container "openssl-qat-engine" must not include "IPC_LOCK" in securityContext.capabilities.add), runAsNonRoot != true (pod or container "openssl-qat-engine" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "openssl-qat-engine" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+  [1mSTEP:[0m waiting the cpa_sample_code pod for the resourceqat.intel.com/cyto finish successfully [38;5;243m@ 08/26/24 08:43:54.811[0m
+  [1mSTEP:[0m Saw pod success [38;5;243m@ 08/26/24 08:45:07.021[0m
+  < Exit [1m[It][0m deploys a crypto pod (openssl) requesting QAT resources [App:openssl] [38;5;243m@ 08/26/24 08:45:07.091 (1m12.29s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.091[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.091 (0s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.091[0m
+  [1mSTEP:[0m Destroying namespace "qatplugindpdk-9941" for this suite. [38;5;243m@ 08/26/24 08:45:07.091[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.097 (6ms)[0m
+[38;5;10m• [72.967 seconds][0m
+[38;5;243m------------------------------[0m
+[0mQAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243mWhen QAT resources are available with crypto (cy) services enabled [Resource:cy] [0m[1mdeploys a crypto pod (dpdk crypto-perf) requesting QAT resources [App:crypto-perf][0m
+[38;5;243m/home/hj-johannes/intel-device-plugins-for-kubernetes/test/e2e/qat/qatplugin_dpdk.go:104[0m
+  > Enter [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.097[0m
+  [1mSTEP:[0m Creating a kubernetes client [38;5;243m@ 08/26/24 08:45:07.097[0m
+  I0826 08:45:07.097813 204529 util.go:499] >>> kubeConfig: /etc/rancher/rke2/rke2.yaml
+  [1mSTEP:[0m Building a namespace api object, basename qatplugindpdk [38;5;243m@ 08/26/24 08:45:07.099[0m
+  [1mSTEP:[0m Waiting for a default service account to be provisioned in namespace [38;5;243m@ 08/26/24 08:45:07.111[0m
+  [1mSTEP:[0m Waiting for kube-root-ca.crt to be provisioned in namespace [38;5;243m@ 08/26/24 08:45:07.117[0m
+  < Exit [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.122 (25ms)[0m
+  > Enter [1m[BeforeEach][0m When QAT resources are available with crypto (cy) services enabled [Resource:cy] [38;5;243m@ 08/26/24 08:45:07.122[0m
+  [1mSTEP:[0m creating a configMap before plugin gets deployed [38;5;243m@ 08/26/24 08:45:07.122[0m
+  I0826 08:45:07.122340 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-3677 create configmap --from-literal qat.conf=ServicesEnabled=sym;asym qat-config'
+  I0826 08:45:07.217161 204529 builder.go:146] stderr: ""
+  I0826 08:45:07.217236 204529 builder.go:147] stdout: "configmap/qat-config created\n"
+  [1mSTEP:[0m setting resourceName for cy services [38;5;243m@ 08/26/24 08:45:07.217[0m
+  < Exit [1m[BeforeEach][0m When QAT resources are available with crypto (cy) services enabled [Resource:cy] [38;5;243m@ 08/26/24 08:45:07.217 (95ms)[0m
+  > Enter [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.217[0m
+  [1mSTEP:[0m deploying QAT plugin in DPDK mode [38;5;243m@ 08/26/24 08:45:07.217[0m
+  I0826 08:45:07.217662 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-3677 apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:45:07.502271 204529 builder.go:146] stderr: "Warning: would violate PodSecurity \"restricted:latest\": forbidden AppArmor profile (container.apparmor.security.beta.kubernetes.io/intel-qat-plugin=\"unconfined\"), privileged (container \"intel-qat-initcontainer\" must not set securityContext.privileged=true), seLinuxOptions (container \"intel-qat-plugin\" set forbidden securityContext.seLinuxOptions: type \"container_device_plugin_t\"), allowPrivilegeEscalation != false (container \"intel-qat-initcontainer\" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.capabilities.drop=[\"ALL\"]), restricted volume types (volumes \"sysfs\", \"devdir\", \"debugfsdir\", \"pcidir\", \"kubeletsockets\" use restricted volume type \"hostPath\"), runAsNonRoot != true (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.runAsNonRoot=true), seccompProfile (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.seccompProfile.type to \"RuntimeDefault\" or \"Localhost\")\n"
+  I0826 08:45:07.502349 204529 builder.go:147] stdout: "daemonset.apps/intel-qat-plugin-e2e created\n"
+  [1mSTEP:[0m checking if the resource is allocatable [38;5;243m@ 08/26/24 08:45:07.502[0m
+  I0826 08:45:07.502443 204529 utils.go:57] Waiting up to 30s for any positive allocatable resource "qat.intel.com/cy"
+  I0826 08:45:07.506347 204529 utils.go:75] Found 4 of "qat.intel.com/cy". Elapsed: 3.865816ms
+  [1mSTEP:[0m undeploying QAT plugin [38;5;243m@ 08/26/24 08:45:07.506[0m
+  I0826 08:45:07.506568 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-3677 delete -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:45:07.757008 204529 builder.go:146] stderr: ""
+  I0826 08:45:07.757101 204529 builder.go:147] stdout: "daemonset.apps \"intel-qat-plugin-e2e\" deleted\n"
+  < Exit [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:07.757 (540ms)[0m
+  > Enter [1m[It][0m deploys a crypto pod (dpdk crypto-perf) requesting QAT resources [App:crypto-perf] [38;5;243m@ 08/26/24 08:45:07.757[0m
+  [1mSTEP:[0m submitting a crypto pod requesting QAT resources [38;5;243m@ 08/26/24 08:45:07.757[0m
+  I0826 08:45:07.757307 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-3677 apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_dpdk_app/crypto-perf'
+  I0826 08:45:07.951095 204529 builder.go:146] stderr: "Warning: would violate PodSecurity \"restricted:latest\": unrestricted capabilities (container \"crypto-perf\" must set securityContext.capabilities.drop=[\"ALL\"]; container \"crypto-perf\" must not include \"IPC_LOCK\" in securityContext.capabilities.add), runAsNonRoot != true (pod or container \"crypto-perf\" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container \"crypto-perf\" must set securityContext.seccompProfile.type to \"RuntimeDefault\" or \"Localhost\")\n"
+  I0826 08:45:07.951147 204529 builder.go:147] stdout: "pod/qat-dpdk-test-crypto-perf created\n"
+  [1mSTEP:[0m waiting the crypto pod to finish successfully [38;5;243m@ 08/26/24 08:45:07.951[0m
+  [1mSTEP:[0m Saw pod success [38;5;243m@ 08/26/24 08:45:23.999[0m
+  < Exit [1m[It][0m deploys a crypto pod (dpdk crypto-perf) requesting QAT resources [App:crypto-perf] [38;5;243m@ 08/26/24 08:45:24.013 (16.257s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.013[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.014 (0s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.014[0m
+  [1mSTEP:[0m Destroying namespace "qatplugindpdk-3677" for this suite. [38;5;243m@ 08/26/24 08:45:24.014[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.019 (6ms)[0m
+[38;5;10m• [16.922 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[0mQAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243mWhen QAT resources are available with compress (dc) services enabled [Resource:dc] [0m[1mdeploys a compress pod (openssl) requesting QAT resources [App:openssl][0m
+[38;5;243m/home/hj-johannes/intel-device-plugins-for-kubernetes/test/e2e/qat/qatplugin_dpdk.go:127[0m
+  > Enter [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.02[0m
+  [1mSTEP:[0m Creating a kubernetes client [38;5;243m@ 08/26/24 08:45:24.02[0m
+  I0826 08:45:24.020490 204529 util.go:499] >>> kubeConfig: /etc/rancher/rke2/rke2.yaml
+  [1mSTEP:[0m Building a namespace api object, basename qatplugindpdk [38;5;243m@ 08/26/24 08:45:24.022[0m
+  [1mSTEP:[0m Waiting for a default service account to be provisioned in namespace [38;5;243m@ 08/26/24 08:45:24.037[0m
+  [1mSTEP:[0m Waiting for kube-root-ca.crt to be provisioned in namespace [38;5;243m@ 08/26/24 08:45:24.042[0m
+  < Exit [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.055 (35ms)[0m
+  > Enter [1m[BeforeEach][0m When QAT resources are available with compress (dc) services enabled [Resource:dc] [38;5;243m@ 08/26/24 08:45:24.055[0m
+  [1mSTEP:[0m creating a configMap before plugin gets deployed [38;5;243m@ 08/26/24 08:45:24.055[0m
+  I0826 08:45:24.055672 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-473 create configmap --from-literal qat.conf=ServicesEnabled=dc qat-config'
+  I0826 08:45:24.151897 204529 builder.go:146] stderr: ""
+  I0826 08:45:24.151984 204529 builder.go:147] stdout: "configmap/qat-config created\n"
+  [1mSTEP:[0m setting resourceName for dc services [38;5;243m@ 08/26/24 08:45:24.152[0m
+  < Exit [1m[BeforeEach][0m When QAT resources are available with compress (dc) services enabled [Resource:dc] [38;5;243m@ 08/26/24 08:45:24.152 (97ms)[0m
+  > Enter [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:24.152[0m
+  [1mSTEP:[0m deploying QAT plugin in DPDK mode [38;5;243m@ 08/26/24 08:45:24.152[0m
+  I0826 08:45:24.152464 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-473 apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:45:24.445044 204529 builder.go:146] stderr: "Warning: would violate PodSecurity \"restricted:latest\": forbidden AppArmor profile (container.apparmor.security.beta.kubernetes.io/intel-qat-plugin=\"unconfined\"), privileged (container \"intel-qat-initcontainer\" must not set securityContext.privileged=true), seLinuxOptions (container \"intel-qat-plugin\" set forbidden securityContext.seLinuxOptions: type \"container_device_plugin_t\"), allowPrivilegeEscalation != false (container \"intel-qat-initcontainer\" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.capabilities.drop=[\"ALL\"]), restricted volume types (volumes \"sysfs\", \"devdir\", \"debugfsdir\", \"pcidir\", \"kubeletsockets\" use restricted volume type \"hostPath\"), runAsNonRoot != true (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.runAsNonRoot=true), seccompProfile (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.seccompProfile.type to \"RuntimeDefault\" or \"Localhost\")\n"
+  I0826 08:45:24.445130 204529 builder.go:147] stdout: "daemonset.apps/intel-qat-plugin-e2e created\n"
+  [1mSTEP:[0m checking if the resource is allocatable [38;5;243m@ 08/26/24 08:45:24.445[0m
+  I0826 08:45:24.445266 204529 utils.go:57] Waiting up to 30s for any positive allocatable resource "qat.intel.com/dc"
+  I0826 08:45:24.449351 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 4.043ms
+  I0826 08:45:25.454606 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 1.009297758s
+  I0826 08:45:26.460352 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 2.015045678s
+  I0826 08:45:27.465618 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 3.020312061s
+  I0826 08:45:28.472605 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 4.027300983s
+  I0826 08:45:29.478951 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 5.033646432s
+  I0826 08:45:30.483805 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 6.038501028s
+  I0826 08:45:31.489119 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 7.043814571s
+  I0826 08:45:32.495036 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 8.049732438s
+  I0826 08:45:33.501376 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 9.056069176s
+  I0826 08:45:34.507873 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 10.062568972s
+  I0826 08:45:35.514394 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 11.069090258s
+  I0826 08:45:36.520518 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 12.075215652s
+  I0826 08:45:37.525152 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 13.079847311s
+  I0826 08:45:38.531653 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 14.086343731s
+  I0826 08:45:39.538161 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 15.092860082s
+  I0826 08:45:40.543091 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 16.097784987s
+  I0826 08:45:41.548851 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 17.103543859s
+  I0826 08:45:42.555878 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 18.110574922s
+  I0826 08:45:43.561071 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 19.115764063s
+  I0826 08:45:44.567261 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 20.121954817s
+  I0826 08:45:45.573334 204529 utils.go:75] Found 0 of "qat.intel.com/dc". Elapsed: 21.128028973s
+  I0826 08:45:46.579005 204529 utils.go:75] Found 4 of "qat.intel.com/dc". Elapsed: 22.133699505s
+  [1mSTEP:[0m undeploying QAT plugin [38;5;243m@ 08/26/24 08:45:46.579[0m
+  I0826 08:45:46.579247 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-473 delete -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:45:46.824478 204529 builder.go:146] stderr: ""
+  I0826 08:45:46.824601 204529 builder.go:147] stdout: "daemonset.apps \"intel-qat-plugin-e2e\" deleted\n"
+  < Exit [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:45:46.824 (22.672s)[0m
+  > Enter [1m[It][0m deploys a compress pod (openssl) requesting QAT resources [App:openssl] [38;5;243m@ 08/26/24 08:45:46.824[0m
+  [1mSTEP:[0m submitting a pod requesting QATqat.intel.com/dcresources [38;5;243m@ 08/26/24 08:45:46.824[0m
+  W0826 08:45:46.834798  204529 warnings.go:70] would violate PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "openssl-qat-engine" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "openssl-qat-engine" must set securityContext.capabilities.drop=["ALL"]; container "openssl-qat-engine" must not include "IPC_LOCK" in securityContext.capabilities.add), runAsNonRoot != true (pod or container "openssl-qat-engine" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "openssl-qat-engine" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+  [1mSTEP:[0m waiting the cpa_sample_code pod for the resourceqat.intel.com/dcto finish successfully [38;5;243m@ 08/26/24 08:45:46.835[0m
+  [1mSTEP:[0m Saw pod success [38;5;243m@ 08/26/24 08:46:10.902[0m
+  < Exit [1m[It][0m deploys a compress pod (openssl) requesting QAT resources [App:openssl] [38;5;243m@ 08/26/24 08:46:10.937 (24.113s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:10.937[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:10.937 (0s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:10.937[0m
+  [1mSTEP:[0m Destroying namespace "qatplugindpdk-473" for this suite. [38;5;243m@ 08/26/24 08:46:10.937[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:10.944 (7ms)[0m
+[38;5;10m• [46.925 seconds][0m
+[38;5;243m------------------------------[0m
+[0mQAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243mWhen QAT resources are available with compress (dc) services enabled [Resource:dc] [0m[1mdeploys a compress pod (dpdk compress-perf) requesting QAT resources [App:compress-perf][0m
+[38;5;243m/home/hj-johannes/intel-device-plugins-for-kubernetes/test/e2e/qat/qatplugin_dpdk.go:131[0m
+  > Enter [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:10.945[0m
+  [1mSTEP:[0m Creating a kubernetes client [38;5;243m@ 08/26/24 08:46:10.945[0m
+  I0826 08:46:10.945651 204529 util.go:499] >>> kubeConfig: /etc/rancher/rke2/rke2.yaml
+  [1mSTEP:[0m Building a namespace api object, basename qatplugindpdk [38;5;243m@ 08/26/24 08:46:10.947[0m
+  [1mSTEP:[0m Waiting for a default service account to be provisioned in namespace [38;5;243m@ 08/26/24 08:46:10.96[0m
+  [1mSTEP:[0m Waiting for kube-root-ca.crt to be provisioned in namespace [38;5;243m@ 08/26/24 08:46:10.963[0m
+  < Exit [1m[BeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:10.967 (23ms)[0m
+  > Enter [1m[BeforeEach][0m When QAT resources are available with compress (dc) services enabled [Resource:dc] [38;5;243m@ 08/26/24 08:46:10.967[0m
+  [1mSTEP:[0m creating a configMap before plugin gets deployed [38;5;243m@ 08/26/24 08:46:10.968[0m
+  I0826 08:46:10.968132 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-6236 create configmap --from-literal qat.conf=ServicesEnabled=dc qat-config'
+  I0826 08:46:11.063325 204529 builder.go:146] stderr: ""
+  I0826 08:46:11.063381 204529 builder.go:147] stdout: "configmap/qat-config created\n"
+  [1mSTEP:[0m setting resourceName for dc services [38;5;243m@ 08/26/24 08:46:11.063[0m
+  < Exit [1m[BeforeEach][0m When QAT resources are available with compress (dc) services enabled [Resource:dc] [38;5;243m@ 08/26/24 08:46:11.063 (95ms)[0m
+  > Enter [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:11.063[0m
+  [1mSTEP:[0m deploying QAT plugin in DPDK mode [38;5;243m@ 08/26/24 08:46:11.063[0m
+  I0826 08:46:11.063670 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-6236 apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:46:11.363026 204529 builder.go:146] stderr: "Warning: would violate PodSecurity \"restricted:latest\": forbidden AppArmor profile (container.apparmor.security.beta.kubernetes.io/intel-qat-plugin=\"unconfined\"), privileged (container \"intel-qat-initcontainer\" must not set securityContext.privileged=true), seLinuxOptions (container \"intel-qat-plugin\" set forbidden securityContext.seLinuxOptions: type \"container_device_plugin_t\"), allowPrivilegeEscalation != false (container \"intel-qat-initcontainer\" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.capabilities.drop=[\"ALL\"]), restricted volume types (volumes \"sysfs\", \"devdir\", \"debugfsdir\", \"pcidir\", \"kubeletsockets\" use restricted volume type \"hostPath\"), runAsNonRoot != true (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.runAsNonRoot=true), seccompProfile (pod or containers \"intel-qat-initcontainer\", \"intel-qat-plugin\" must set securityContext.seccompProfile.type to \"RuntimeDefault\" or \"Localhost\")\n"
+  I0826 08:46:11.363111 204529 builder.go:147] stdout: "daemonset.apps/intel-qat-plugin-e2e created\n"
+  [1mSTEP:[0m checking if the resource is allocatable [38;5;243m@ 08/26/24 08:46:11.363[0m
+  I0826 08:46:11.363217 204529 utils.go:57] Waiting up to 30s for any positive allocatable resource "qat.intel.com/dc"
+  I0826 08:46:11.366664 204529 utils.go:75] Found 4 of "qat.intel.com/dc". Elapsed: 3.402008ms
+  [1mSTEP:[0m undeploying QAT plugin [38;5;243m@ 08/26/24 08:46:11.366[0m
+  I0826 08:46:11.366877 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-6236 delete -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_plugin/overlays/e2e'
+  I0826 08:46:11.609886 204529 builder.go:146] stderr: ""
+  I0826 08:46:11.610016 204529 builder.go:147] stdout: "daemonset.apps \"intel-qat-plugin-e2e\" deleted\n"
+  < Exit [1m[JustBeforeEach][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:11.61 (547ms)[0m
+  > Enter [1m[It][0m deploys a compress pod (dpdk compress-perf) requesting QAT resources [App:compress-perf] [38;5;243m@ 08/26/24 08:46:11.61[0m
+  [1mSTEP:[0m submitting a compress pod requesting QAT resources [38;5;243m@ 08/26/24 08:46:11.61[0m
+  I0826 08:46:11.610473 204529 builder.go:121] Running '/usr/local/bin/kubectl --server=https://127.0.0.1:6443 --kubeconfig=/etc/rancher/rke2/rke2.yaml --namespace=qatplugindpdk-6236 apply -k /home/hj-johannes/intel-device-plugins-for-kubernetes/deployments/qat_dpdk_app/compress-perf'
+  I0826 08:46:11.997180 204529 builder.go:146] stderr: "Warning: would violate PodSecurity \"restricted:latest\": unrestricted capabilities (container \"compress-perf\" must set securityContext.capabilities.drop=[\"ALL\"]; container \"compress-perf\" must not include \"IPC_LOCK\" in securityContext.capabilities.add), runAsNonRoot != true (pod or container \"compress-perf\" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container \"compress-perf\" must set securityContext.seccompProfile.type to \"RuntimeDefault\" or \"Localhost\")\n"
+  I0826 08:46:11.997263 204529 builder.go:147] stdout: "configmap/test-data-794628mbb6 created\npod/qat-dpdk-test-compress-perf created\n"
+  [1mSTEP:[0m waiting the compress pod to finish successfully [38;5;243m@ 08/26/24 08:46:11.997[0m
+  [1mSTEP:[0m Saw pod success [38;5;243m@ 08/26/24 08:46:22.031[0m
+  < Exit [1m[It][0m deploys a compress pod (dpdk compress-perf) requesting QAT resources [App:compress-perf] [38;5;243m@ 08/26/24 08:46:22.043 (10.433s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:22.043[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:22.043 (0s)[0m
+  > Enter [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:22.043[0m
+  [1mSTEP:[0m Destroying namespace "qatplugindpdk-6236" for this suite. [38;5;243m@ 08/26/24 08:46:22.044[0m
+  < Exit [1m[DeferCleanup (Each)][0m QAT plugin in DPDK mode [Device:qat] [Mode:dpdk] [38;5;243m@ 08/26/24 08:46:22.049 (5ms)[0m
+[38;5;10m• [11.104 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;10m[1mRan 4 of 44 Specs in 166.088 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m4 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m40 Skipped[0m
+--- PASS: TestDevicePlugins (166.09s)
+PASS
+ok  	github.com/intel/intel-device-plugins-for-kubernetes/test/e2e	166.196s

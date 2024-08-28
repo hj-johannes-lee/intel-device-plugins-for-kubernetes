@@ -1,0 +1,24 @@
+diff --git a/deployments/operator/samples/deviceplugin_v1_qatdeviceplugin.yaml b/deployments/operator/samples/deviceplugin_v1_qatdeviceplugin.yaml
+index b4ee1808..3ae09521 100644
+--- a/deployments/operator/samples/deviceplugin_v1_qatdeviceplugin.yaml
++++ b/deployments/operator/samples/deviceplugin_v1_qatdeviceplugin.yaml
+@@ -6,8 +6,8 @@ metadata:
+   # see more details here:
+   #  - https://kubernetes.io/docs/tutorials/clusters/apparmor/#securing-a-pod
+   #  - https://github.com/intel/intel-device-plugins-for-kubernetes/issues/381
+-  # annotations:
+-  #   container.apparmor.security.beta.kubernetes.io/intel-qat-plugin: unconfined
++  annotations:
++    container.apparmor.security.beta.kubernetes.io/intel-qat-plugin: unconfined
+ spec:
+   image: intel/intel-qat-plugin:0.30.0
+   initImage: intel/intel-qat-initcontainer:0.30.0
+@@ -15,7 +15,7 @@ spec:
+   kernelVfDrivers:
+     - 4xxxvf
+     - 420xxvf
+-  maxNumDevices: 1
++  maxNumDevices: 4
+   logLevel: 4
+   nodeSelector:
+     intel.feature.node.kubernetes.io/qat: 'true'

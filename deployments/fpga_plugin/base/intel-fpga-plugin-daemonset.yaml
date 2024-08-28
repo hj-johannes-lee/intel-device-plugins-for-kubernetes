@@ -44,6 +44,13 @@ spec:
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: 1
+          limits:
+            memory: "50Mi"
+            cpu: 1
         volumeMounts:
         - name: devfs
           mountPath: /dev
