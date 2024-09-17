@@ -11,6 +11,10 @@ QAT_420XX_DEVICE_PCI_ID="0x4946"
 SERVICES_ENABLED="NONE"
 SERVICES_ENABLED_FOUND="FALSE"
 
+AUTORESET_ENABLED="NONE"
+AUTORESET_ENABLED_FOUND="FALSE"
+AUTORESET_OPTIONS_LIST="on off"
+
 check_config() {
   enabled_config="NONE"
   [ -f "conf/qat.conf" ] && enabled_config=$(grep "^$1=" conf/qat.conf | cut -d= -f 2 | grep '\S')
@@ -79,7 +83,29 @@ enable_sriov() {
   done
 }
 
+enable_auto_reset() {
+  if [ "$AUTORESET_ENABLED_FOUND" = "TRUE" ]; then
+    for dev in $DEVS; do
+      DEVPATH="/sys/bus/pci/devices/0000:$dev"
+      AUTORESET_PATH="$DEVPATH/qat/auto_reset"
+      if ! test -w "$AUTORESET_PATH"; then
+        echo "error: $AUTORESET_PATH is not found or not writable. Check if QAT driver module is loaded. Skipping..."
+        exit 1
+      fi
+      if [ "$(cat "$AUTORESET_PATH")" == "$AUTORESET_ENABLED" ]; then
+        echo "$DEVPATH's auto reset is already $AUTORESET_ENABLED"
+      else
+        echo "$AUTORESET_ENABLED" > "$AUTORESET_PATH" && echo "$DEVPATH's auto reset has been set $AUTORESET_ENABLED"
+      fi
+    done
+  fi
+}
+
 SERVICES_ENABLED=$(check_config "ServicesEnabled" "$SERVICES_LIST")
 SERVICES_ENABLED_FOUND=$(is_found "$SERVICES_ENABLED")
 sysfs_config
 enable_sriov
+
+AUTORESET_ENABLED=$(check_config "AutoresetEnabled" "$AUTORESET_OPTIONS_LIST")
+AUTORESET_ENABLED_FOUND=$(is_found "$AUTORESET_ENABLED")
+enable_auto_reset
