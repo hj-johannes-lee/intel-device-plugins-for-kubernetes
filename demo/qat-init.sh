@@ -12,18 +12,31 @@ SERVICES_ENABLED="NONE"
 SERVICES_ENABLED_FOUND="FALSE"
 
 check_config() {
-  [ -f "conf/qat.conf" ] && SERVICES_ENABLED=$(cut -d= -f 2 conf/qat.conf | grep '\S')
-  [ -f "conf/qat-$NODE_NAME.conf" ] && SERVICES_ENABLED=$(cut -d= -f 2 conf/qat-$NODE_NAME.conf | grep '\S')
-
-  if [ "$SERVICES_ENABLED" != "NONE" ]; then
-    SERVICES_ENABLED_FOUND="FALSE"
-    for SERVICE in $SERVICES_LIST
+  enabled_config="NONE"
+  [ -f "conf/qat.conf" ] && enabled_config=$(grep "^$1=" conf/qat.conf | cut -d= -f 2 | grep '\S')
+  [ -f "conf/qat-$NODE_NAME.conf" ] && enabled_config=$(grep "^$1=" conf/qat-"$NODE_NAME".conf | cut -d= -f 2 | grep '\S')
+  is_config_valid="FALSE"
+  if [ "$enabled_config" != "NONE" ]; then
+    for config in $2
     do
-      if [ "$SERVICE" = "$SERVICES_ENABLED" ]; then
-        SERVICES_ENABLED_FOUND="TRUE"
+      if [ "$config" = "$enabled_config" ]; then
+        is_config_valid="TRUE"
         break
       fi
     done
+  fi
+  if [ "$is_config_valid" = "TRUE" ]; then
+    echo "$enabled_config"
+  else
+    echo "NONE"
+  fi
+}
+
+is_found() {
+  if [ "$1" = "NONE" ]; then
+    echo "FALSE"
+  else
+    echo "TRUE"
   fi
 }
 
@@ -66,6 +79,7 @@ enable_sriov() {
   done
 }
 
-check_config
+SERVICES_ENABLED=$(check_config "ServicesEnabled" "$SERVICES_LIST")
+SERVICES_ENABLED_FOUND=$(is_found "$SERVICES_ENABLED")
 sysfs_config
 enable_sriov
