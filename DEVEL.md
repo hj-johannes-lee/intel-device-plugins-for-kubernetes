@@ -136,12 +136,12 @@ Check if [manager yaml file](deployments/operator/manager/manager.yaml) `spec.te
 
 Fork the [Community Operators](https://github.com/k8s-operatorhub/community-operators) repo and clone it:
 ```
-$ git clone https://github.com/<GitHub Username>/community-operators
+$ git clone https://github.com/hj-johannes-lee/community-operators
 ```
 
 Generate bundle and build bundle image:
 ```
-$ make bundle TAG=0.X.Y CHANNELS=alpha DEFAULT_CHANNEL=alpha
+$ make bundle TAG=0.31.0 CHANNELS=stable DEFAULT_CHANNEL=stable
 $ make bundle-build
 ```
 

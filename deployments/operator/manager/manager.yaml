@@ -65,5 +65,32 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: INTEL_DLB_PLUGIN_SHA
+            value: intel/intel-dlb-plugin@sha256:f2d53ebe5cc238100d99b40c118d9ccbe8a5a90a627d421b99e6f1b47c61c3e7
+          - name: INTEL_DLB_INITCONTAINER_SHA
+            value: intel/intel-dlb-initcontainer@sha256:9f5135fcd450b011f49bc7a7d42fee4e9988d67325c736ee6616ea6a0c510fce
+          - name: INTEL_DSA_PLUGIN_SHA
+            value: intel/intel-dsa-plugin@sha256:092a372d6dd0df39054ac720f5abb245c4599a2c592d231547a640f6bdc50b18
+          - name: INTEL_IDXD_CONFIG_INITCONTAINER_SHA
+            value: intel/intel-idxd-config-initcontainer@sha256:79f098e890d620030c45dc5f6f485f97084e2d3c151e255f9b484dbf7d94837e
+          - name: INTEL_FPGA_PLUGIN_SHA
+            value: intel/intel-fpga-plugin@sha256:092b10365ab5412657ee2fc557b213f252d736feb31f37411e5c753306168153
+          - name: INTEL_FPGA_INITCONTAINER_SHA
+            value: intel/intel-fpga-initcontainer@sha256:c564c82603c295991d32dac458c4a128d69341da3c8a398019d17187f6e8c6ee 
+          - name: INTEL_GPU_PLUGIN_SHA
+            value: intel/intel-gpu-plugin@sha256:0e9b1c383c2b6b2690a9a6143c1d613e5b809abb4c27f8a38dd0f2a29e176896
+          - name: INTEL_GPU_INITCONTAINER_SHA
+            value: intel/intel-gpu-initcontainer@sha256:804d1f7b3a52f9d4d232878c0d97a80dc059b38447372f3d0d922767f108e878
+          - name: INTEL_IAA_PLUGIN_SHA
+            value: intel/intel-iaa-plugin@sha256:4b8c36c35141bc397c04378a5bee09f60ff8b225e2783e09da320bb219e3e823
+          - name: INTEL_QAT_PLUGIN_SHA
+            value: intel/intel-qat-plugin@sha256:69858421d6abd38867f61844db2c3fa7275bf6c089efd547e7de98dfc0c90a1a
+          - name: INTEL_QAT_INITCONTAINER_SHA
+            value: intel/intel-qat-initcontainer@sha256:db3f56197b481d6a3a0f1198223bceb4e6636486b95475cb1c5dc3dd95672dab
+          - name: INTEL_SGX_PLUGIN_SHA
+            value: intel/intel-sgx-plugin@sha256:eec91b2f62029998b5ceae8067fcd3506b4f957828b8f6e3061581f860862db5
+          - name: INTEL_SGX_INITCONTAINER_SHA
+            value: intel/intel-sgx-initcontainer@sha256:12f66b26eeddcffdef1f04b7bcbb666c4c170c8ecb58ea917781c8d0697e4365            
+
       serviceAccountName: default
       terminationGracePeriodSeconds: 120
