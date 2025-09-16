@@ -10,26 +10,6 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-deviceplugin-intel-com-v1-dlbdeviceplugin
-  failurePolicy: Fail
-  name: mdlbdeviceplugin.kb.io
-  rules:
-  - apiGroups:
-    - deviceplugin.intel.com
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - dlbdeviceplugins
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
       path: /mutate-deviceplugin-intel-com-v1-dsadeviceplugin
   failurePolicy: Fail
   name: mdsadeviceplugin.kb.io
@@ -43,26 +23,6 @@ webhooks:
     - UPDATE
     resources:
     - dsadeviceplugins
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
-      path: /mutate-deviceplugin-intel-com-v1-fpgadeviceplugin
-  failurePolicy: Fail
-  name: mfpgadeviceplugin.kb.io
-  rules:
-  - apiGroups:
-    - deviceplugin.intel.com
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - fpgadeviceplugins
   sideEffects: None
 - admissionReviewVersions:
   - v1
@@ -171,25 +131,6 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /pods
-  failurePolicy: Ignore
-  name: fpga.mutator.webhooks.intel.com
-  rules:
-  - apiGroups:
-    - ""
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    resources:
-    - pods
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
       path: /mutate--v1-pod
   failurePolicy: Ignore
   name: sgx.mutator.webhooks.intel.com
@@ -216,26 +157,6 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-deviceplugin-intel-com-v1-dlbdeviceplugin
-  failurePolicy: Fail
-  name: vdlbdeviceplugin.kb.io
-  rules:
-  - apiGroups:
-    - deviceplugin.intel.com
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - dlbdeviceplugins
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
       path: /validate-deviceplugin-intel-com-v1-dsadeviceplugin
   failurePolicy: Fail
   name: vdsadeviceplugin.kb.io
@@ -249,26 +170,6 @@ webhooks:
     - UPDATE
     resources:
     - dsadeviceplugins
-  sideEffects: None
-- admissionReviewVersions:
-  - v1
-  clientConfig:
-    service:
-      name: webhook-service
-      namespace: system
-      path: /validate-deviceplugin-intel-com-v1-fpgadeviceplugin
-  failurePolicy: Fail
-  name: vfpgadeviceplugin.kb.io
-  rules:
-  - apiGroups:
-    - deviceplugin.intel.com
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - fpgadeviceplugins
   sideEffects: None
 - admissionReviewVersions:
   - v1

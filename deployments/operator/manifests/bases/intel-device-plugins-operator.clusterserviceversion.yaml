@@ -5,8 +5,8 @@ metadata:
     alm-examples: '[]'
     capabilities: Full Lifecycle
     categories: Drivers and plugins
-    containerImage: docker.io/intel/intel-deviceplugin-operator:0.25.0
-    createdAt: "2022-11-09"
+    containerImage: docker.io/intel/intel-deviceplugin-operator:0.34.0
+    createdAt: "2025-09-16"
     description: This operator is a Kubernetes custom controller whose goal is to
       serve the installation and lifecycle management of Intel device plugins for
       Kubernetes.
@@ -26,13 +26,6 @@ spec:
       kind: DsaDevicePlugin
       name: dsadeviceplugins.deviceplugin.intel.com
       version: v1
-    - description: DlbDevicePlugin is the Schema for the dlbdeviceplugins API. It
-        represents the DLB device plugin responsible for advertising DLB device nodes
-        to the kubelet.
-      displayName: Intel Dynamic Load Balancer Device Plugin
-      kind: DlbDevicePlugin
-      name: dlbdeviceplugins.deviceplugin.intel.com
-      version: v1
     - description: IaaDevicePlugin is the Schema for the iaadeviceplugins API. It
         represents the IAA device plugin responsible for advertising Intel IAA hardware
         resources to the kubelet.
@@ -40,42 +33,26 @@ spec:
       kind: IaaDevicePlugin
       name: iaadeviceplugins.deviceplugin.intel.com
       version: v1
-    - description: AcceleratorFunction is a specification for an Accelerator Function
-        resource provided by a FPGA-based programmable hardware accelerator.
-      displayName: Accelerator Function
-      kind: AcceleratorFunction
-      name: acceleratorfunctions.fpga.intel.com
-      version: v2
-    - description: FpgaDevicePlugin is the Schema for the fpgadeviceplugins API. It
-        represents the FPGA device plugin responsible for advertising Intel FPGA hardware
-        resources to the kubelet.
-      displayName: Intel FPGA Device Plugin
-      kind: FpgaDevicePlugin
-      name: fpgadeviceplugins.deviceplugin.intel.com
-      version: v1
-    - description: FpgaRegion is a specification for a FPGA region resource which
-        can be programmed with a bitstream.
-      displayName: FPGA Region
-      kind: FpgaRegion
-      name: fpgaregions.fpga.intel.com
-      version: v2
-    - description: GpuDevicePlugin is the Schema for the gpudeviceplugins API. It
-        represents the GPU device plugin responsible for advertising Intel GPU hardware
-        resources to the kubelet.
+    - description: |-
+        GpuDevicePlugin is the Schema for the gpudeviceplugins API. It represents
+        the GPU device plugin responsible for advertising Intel GPU hardware resources to
+        the kubelet.
       displayName: Intel GPU Device Plugin
       kind: GpuDevicePlugin
       name: gpudeviceplugins.deviceplugin.intel.com
       version: v1
-    - description: QatDevicePlugin is the Schema for the qatdeviceplugins API. It
-        represents the QAT device plugin responsible for advertising Intel QuickAssist
-        Technology hardware resources to the kubelet.
+    - description: |-
+        QatDevicePlugin is the Schema for the qatdeviceplugins API. It represents the QAT device
+        plugin responsible for advertising Intel QuickAssist Technology hardware resources
+        to the kubelet.
       displayName: Intel QuickAssist Technology Device Plugin
       kind: QatDevicePlugin
       name: qatdeviceplugins.deviceplugin.intel.com
       version: v1
-    - description: SgxDevicePlugin is the Schema for the sgxdeviceplugins API. It
-        represents the SGX device plugin responsible for advertising SGX device nodes
-        to the kubelet.
+    - description: |-
+        SgxDevicePlugin is the Schema for the sgxdeviceplugins API. It represents
+        the SGX device plugin responsible for advertising SGX device nodes to
+        the kubelet.
       displayName: Intel Software Guard Extensions Device Plugin
       kind: SgxDevicePlugin
       name: sgxdeviceplugins.deviceplugin.intel.com
@@ -83,7 +60,7 @@ spec:
   description: |
     [Intel Device Plugins for Kubernetes](https://github.com/intel/intel-device-plugins-for-kubernetes) is a collection of
     [device plugins](https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/) advertising Intel specific hardware resources
-    to the kubelet. Currently the operator has basic support for the QAT, GPU, FPGA, SGX, DSA, IAA device plugins: it validates container image references and extends
+    to the kubelet. Currently the operator has basic support for the QAT, GPU, SGX, DSA, IAA device plugins: it validates container image references and extends
     reported statuses.
   displayName: Intel Device Plugins Operator
   icon:
@@ -103,12 +80,10 @@ spec:
   - supported: true
     type: AllNamespaces
   keywords:
-  - fpga
   - qat
   - sgx
   - gpu
   - dsa
-  - dlb
   links:
   - name: Intel Device Plugins Operator
     url: https://github.com/intel/intel-device-plugins-for-kubernetes
@@ -122,5 +97,5 @@ spec:
   provider:
     name: Intel® Corporation
     url: https://intel.com
-  replaces: intel-device-plugins-operator.v0.24.0
-  version: 0.25.0
+  replaces: intel-device-plugins-operator.v0.32.1
+  version: 0.34.0

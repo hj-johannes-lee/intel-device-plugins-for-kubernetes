@@ -71,5 +71,25 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: INTEL_DSA_PLUGIN_SHA
+            value: intel/intel-dsa-plugin@sha256:64a4d830a7a166dc5c5a87e07e2e8f7d36cd41149bb7a66c4ad2a22d5ada3f3c
+          - name: INTEL_IDXD_CONFIG_INITCONTAINER_SHA
+            value: intel/intel-idxd-config-initcontainer@sha256:c998d47c457d60367ef32bfeb168eafd05aadc45c47250514067340a5eb0bdfa
+          - name: INTEL_GPU_PLUGIN_SHA
+            value: intel/intel-gpu-plugin@sha256:bbe2c9a1422a15c666e0a190c7c14a10ec9c22426474f3d9e4204bb8d3e70aa9
+          - name: INTEL_GPU_INITCONTAINER_SHA
+            value: intel/intel-gpu-initcontainer@sha256:9d2a9d50e06e339ebc803d2962fa58abeb41fad2449be60f8c6c58bf6b8d1f49
+          - name: INTEL_IAA_PLUGIN_SHA
+            value: intel/intel-iaa-plugin@sha256:4e5fbb3d7969e76544569b649da5bf67ea6a9183eddab7536f569b86c74841b8
+          - name: INTEL_NPU_PLUGIN_SHA
+            value: intel/intel-npu-plugin@sha256:7aff7d263de048ace7fb69bdf2f79b9396452c6adf98d1d465a61182ec97dda8
+          - name: INTEL_QAT_PLUGIN_SHA
+            value: intel/intel-qat-plugin@sha256:e2ac48357fd19b2b70486f4ed52902d84bb2369521d55455c75054307037625c
+          - name: INTEL_QAT_INITCONTAINER_SHA
+            value: intel/intel-qat-initcontainer@sha256:555931dd9072c746de3461698c173ae60608638ea465fa177321ee70be4b3d2e
+          - name: INTEL_SGX_PLUGIN_SHA
+            value: intel/intel-sgx-plugin@sha256:01ad11f4f3e6767907f56383c6b3c32890dc2808a61befc74ea5ff0a2078355e
+          - name: INTEL_SGX_INITCONTAINER_SHA
+            value: intel/intel-sgx-initcontainer@sha256:e788d4d488154e0fcfd808bd0b53c81d76d7e5398cb03b9458792e95efab89f4
       serviceAccountName: default
       terminationGracePeriodSeconds: 120
